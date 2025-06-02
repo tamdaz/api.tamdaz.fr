@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  setup:
+    dotenv: ['.env']
+    cmds:
+      - if [ "$(ls -1 uploads | wc -l)" -gt 0 ]; then rm uploads/*; fi
+      - micrate drop
+      - micrate create
+      - micrate up
+  test:
+    cmds:
+      - crystal spec
+  link-uploads:
+    cmd: ln -s ./../uploads ./public/uploads
+  unlink-uploads:
+    cmd: rm ./public/uploads

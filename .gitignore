@@ -1,0 +1,10 @@
+/bin/
+/dev/
+/docs/
+/lib/
+/public/uploads
+/uploads/
+/.shards/
+*.dwarf
+/.env
+/.env.test

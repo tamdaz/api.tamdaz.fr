@@ -1,0 +1,43 @@
+name: api
+version: 0.1.0
+
+authors:
+  - tamdaz <tamda.zohir.pro@gmail.com>
+
+targets:
+  api:
+    main: src/server.cr
+  console:
+    main: src/console.cr
+    
+dependencies:
+  athena:
+    github: athena-framework/framework
+    version: ~> 0.20.0
+  crygen:
+    github: tamdaz/crygen
+    version: ~> 0.5.0
+  granite:
+    github: amberframework/granite
+  mysql:
+    github: crystal-lang/crystal-mysql
+    version: ~> 0.16.0
+  db:
+    github: crystal-lang/crystal-db
+    version: ~> 0.13.0
+  athena-spec:
+    github: athena-framework/spec
+    version: ~> 0.3.0
+  athena-dotenv:
+    github: athena-framework/dotenv
+    version: ~> 0.2.0
+  athena-mime:
+    github: athena-framework/mime
+    version: ~> 0.2.0
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.6.0
+
+crystal: '>= 1.16.0'
+
+license: MIT
