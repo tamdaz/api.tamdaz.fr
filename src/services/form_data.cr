@@ -9,7 +9,7 @@ class App::Services::FormData
   getter files = [] of NamedTuple(name: String, filename: String, path: String)
 
   # Starts parsing data when using multipart/form data.
-  def start_parse(req : ATH::Request) : Void
+  def start_parse(req : ATH::Request) : self
     HTTP::FormData.parse(req.request) do |part|
       io_copy_proc = ->(io : IO) { IO.copy(part.body, io) }
       tmp_filename = "/tmp/athena/#{UUID.random}"
@@ -28,6 +28,8 @@ class App::Services::FormData
         @data[part.name] = String.build(&io_copy_proc)
       end
     end
+
+    self
   end
 
   # Find an uploaded file from the form data.
