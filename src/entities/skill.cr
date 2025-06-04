@@ -1,0 +1,21 @@
+@[ASRA::ExclusionPolicy(:all)]
+@[ASRA::AccessorOrder(:custom, order: %w(id name description has_colors logo))]
+class App::Entities::Skill
+  include DB::Serializable
+  include ASR::Serializable
+
+  @[ASRA::Expose]
+  property id : Int64
+
+  @[ASRA::Expose]
+  property name : String
+
+  @[ASRA::Expose]
+  property description : String
+
+  @[ASRA::Expose]
+  property? has_colors : Bool
+
+  @[ASRA::Expose]
+  property logo : String
+end
