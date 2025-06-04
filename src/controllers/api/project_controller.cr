@@ -1,116 +1,71 @@
 @[ADI::Register]
 @[ARTA::Route("/projects")]
 class App::Controllers::API::ProjectController < App::Controllers::AbstractController
-  include App::Interfaces::FileUploadInterface
+  include App::Modules::FileManager
+  include App::Modules::Validator
+
+  ENTITY_NAME = App::Entities::Project.name
 
   def initialize(
     @form_data : App::Services::FormData,
     @event_dispatcher : AED::EventDispatcherInterface,
+    @project_repository : App::Repositories::ProjectRepository,
+    @file_repository : App::Repositories::FileRepository,
   ); end
 
   # Get all projects.
   @[ARTA::Get("/")]
-  def index : Array(App::Models::Project)
-    App::Models::Project.all.to_a
+  def index : Array(App::Entities::Project)
+    @project_repository.find_all
   end
 
   # Get the project by its slug.
   @[ARTA::Get("/{slug}")]
-  def show(slug : String) : App::Models::Project | ATH::StreamedResponse
-    App::Models::Project.find_by!(slug: slug)
-  rescue e : Granite::Querying::NotFound
-    send_json(404, "Le projet #{slug} n'a pas été trouvée")
+  def show(slug : String) : App::Entities::Project
+    @project_repository.find(slug)
   end
 
   # Create a project.
   @[ARTA::Post("/create")]
-  def create(req : ATH::Request) : ATH::StreamedResponse
-    @form_data.start_parse(req)
+  def create(form_data : App::Services::FormData) : ATH::StreamedResponse
+    do_validation(project_dto)
 
-    validate_project = AVD.validator.validate(project_dto)
+    last_project_id = @project_repository.create(project_dto)
 
-    unless validate_project.empty?
-      return send_json { |io| validate_project.to_json io }
-    end
+    save_file!(last_project_id, "thumbnail", ENTITY_NAME)
 
-    project = App::Models::Project.create!(
-      title: project_dto.title,
-      description: project_dto.description,
-      content: project_dto.content,
-      category_id: project_dto.category_id,
-      realized_at: project_dto.realized_at,
-      published_at: project_dto.published_at
-    )
-
-    save_file!(project.id!, "thumbnail")
-
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Un nouveau projet a bien été créé.")
-  rescue e : Granite::RecordNotSaved
-    send_json(500, "Une erreur s'est produite lors de l'enregistrement d'un nouveau projet.")
   end
 
   # Update a project by its slug.
   @[ARTA::Put("/{slug}/update")]
-  def update(slug : String, req : ATH::Request) : ATH::StreamedResponse
-    @form_data.start_parse(req)
+  def update(slug : String, form_data : App::Services::FormData) : ATH::StreamedResponse
+    do_validation(project_dto)
 
-    validate_project = AVD.validator.validate(project_dto)
-
-    unless validate_project.empty?
-      return send_json { |io| validate_project.to_json io }
-    end
-
-    found_project = App::Models::Project.find_by!(slug: slug)
-
-    found_project.update!(
-      title: project_dto.title,
-      description: project_dto.description,
-      content: project_dto.content,
-      category_id: project_dto.category_id,
-      realized_at: project_dto.realized_at,
-      published_at: project_dto.published_at
-    )
+    project_id = @project_repository.update(slug, project_dto)
 
     # Store the thumbnail if it was uploaded by the client.
     unless @form_data.data["thumbnail"]?
-      update_file(found_project.id!, "thumbnail")
+      update_file(project_id, "thumbnail", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Le projet #{slug} a bien été mis à jour.")
-  rescue e : Granite::RecordNotSaved
-    send_json(404, "Le projet #{slug} n'a pas été trouvée")
   end
 
   # Delete the project by its slug.
   @[ARTA::Delete("/{slug}/delete")]
   def delete(slug : String) : ATH::StreamedResponse
-    found_project = App::Models::Project.find_by!(slug: slug)
-
-    found_file = App::Models::File.find_by!(
-      model_id: found_project.id,
-      model_type: App::Models::Project.name
-    )
-
-    File.delete("./uploads/#{found_file.path}")
-
-    found_project.destroy!
-    found_file.destroy!
+    @project_repository.delete(slug)
 
     @event_dispatcher.dispatch(
       App::Events::ClearTemporaryFilesEvent.new
     )
 
     send_json(200, "Le projet #{slug} a bien été supprimé.")
-  rescue e : Granite::Querying::NotFound
-    send_json(500, "Une erreur s'est produite lors de la suppression du projet #{slug}.")
   end
 
   # Store informations into the DTO for the project's processing.
@@ -131,27 +86,5 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
       realized_at: Time.parse_local(@form_data.data["realized_at"], "%F"),
       published_at: published_at
     )
-  end
-
-  # Save a file into the `storage/` directory.
-  private def save_file!(id : Int64, name : String) : Void
-    path_file = @form_data.store_file(name, UUID.random.to_s)
-
-    App::Models::File.create!(
-      model_id: id,
-      model_type: App::Models::Project.name,
-      path: path_file
-    )
-  end
-
-  # Save a new file to replace, if the user have uploaded one.
-  private def update_file(id : Int64, name : String) : Void
-    if @form_data.find_file(name)
-      found_file = App::Models::File.find_by!(model_id: id, model_type: App::Models::Project.name)
-      File.delete("./uploads/#{found_file.path}")
-
-      path_file = @form_data.store_file(name, UUID.random.to_s)
-      found_file.update!(path: path_file)
-    end
   end
 end

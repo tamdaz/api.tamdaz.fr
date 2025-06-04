@@ -1,57 +1,40 @@
+@[ADI::Register]
 @[ARTA::Route("/timelines")]
 class App::Controllers::API::TimelineController < App::Controllers::AbstractController
+  def initialize(
+    @timeline_repository : App::Repositories::TimelineRepository,
+  ); end
+
   # Get all timelines (professional experiences and formations).
   @[ARTA::Get("/")]
-  def index : Array(App::Models::Timeline)
-    App::Models::Timeline.all.to_a
+  def index : Array(App::Entities::Timeline)
+    @timeline_repository.find_all
   end
 
   # Get the timeline by its ID.
   @[ARTA::Get("/{id}")]
-  def show(id : Int64) : App::Models::Timeline | ATH::StreamedResponse
-    App::Models::Timeline.find!(id)
-  rescue e : Granite::Querying::NotFound
-    send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
+  def show(id : Int64) : App::Entities::Timeline
+    @timeline_repository.find(id)
   end
 
   # Create a timeline.
   @[ARTA::Post("/create")]
   def create(@[ATHA::MapRequestBody] timeline_dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
-    found_timeline = App::Models::Timeline.create!(
-      date_start: timeline_dto.date_start,
-      date_end: timeline_dto.date_end,
-      description: timeline_dto.description,
-      type: timeline_dto.type
-    )
-
-    send_json(200, "Le timeline #{found_timeline.id} a bien été créé.")
-  rescue e : Granite::RecordNotSaved
-    send_json(500, "Une erreur s'est produite lors de l'enregistrement d'une nouvelle timeline.")
+    @timeline_repository.create(timeline_dto)
+    send_json(200, "Le nouveau timeline a bien été créé.")
   end
 
   # Update the timeline by its ID.
   @[ARTA::Put("/{id}/update")]
   def update(id : Int64, @[ATHA::MapRequestBody] timeline_dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
-    found_timeline = App::Models::Timeline.find!(id)
-    found_timeline.update!(
-      date_start: timeline_dto.date_start,
-      date_end: timeline_dto.date_end,
-      description: timeline_dto.description,
-      type: timeline_dto.type
-    )
-
-    send_json(200, "La timeline #{found_timeline.id} a bien été mis à jour.")
-  rescue e : Granite::RecordNotSaved
-    send_json(500, "Une erreur s'est produite lors de l'enregistrement de la timeline n°#{id}.")
+    @timeline_repository.update(id, timeline_dto)
+    send_json(200, "La timeline #{id} a bien été mis à jour.")
   end
 
   # Delete the timeline by its ID.
   @[ARTA::Delete("/{id}/delete")]
   def delete(id : Int64) : ATH::StreamedResponse
-    App::Models::Timeline.find!(id).destroy!
-
+    @timeline_repository.delete(id)
     send_json(200, "Le timeline #{id} a bien été supprimé.")
-  rescue e : Granite::Querying::NotFound
-    send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
   end
 end
