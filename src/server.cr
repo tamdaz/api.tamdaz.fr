@@ -2,7 +2,6 @@ require "mysql"
 require "athena"
 require "file_utils"
 require "athena-dotenv"
-require "granite/adapter/mysql"
 require "./app"
 
 Athena::Dotenv.load
@@ -21,11 +20,6 @@ ATH.configure({
     },
   },
 })
-
-Granite::Connections << Granite::Adapter::Mysql.new(
-  name: ENV["DATABASE_CONNECTION"],
-  url: ENV["DATABASE_URL"]
-)
 
 Dir.mkdir_p("/tmp/athena")
 
