@@ -6,7 +6,7 @@ struct App::DTO::CategoryDTO
   getter name : String
 
   @[Assert::Choice(
-    App::Enums::Categories::Usage.names,
+    ["Blogs", "Reports", "Projects"],
     message: "Veuillez choisir l'une des 3 usages : 'Blogs', 'Categories' et 'Reports'."
   )]
   getter usage : String
