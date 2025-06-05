@@ -1,0 +1,3 @@
+class App::Exceptions::DataNotFoundException < Exception
+  # ...
+end

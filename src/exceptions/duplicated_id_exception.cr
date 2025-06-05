@@ -1,0 +1,3 @@
+class App::Exceptions::DuplicatedIDException < Exception
+  # ...
+end
