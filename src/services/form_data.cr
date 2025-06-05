@@ -30,6 +30,11 @@ class App::Services::FormData
     end
 
     self
+  rescue HTTP::FormData::Error
+    data.clear
+    files.clear
+
+    self
   end
 
   # Find an uploaded file from the form data.
