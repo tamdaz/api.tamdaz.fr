@@ -23,16 +23,16 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
 
   # Get the skill by its ID.
   @[ARTA::Get("/{id}")]
-  def show(id : Int64) : App::Entities::Skill
+  def show(id : Int64) : App::Entities::Skill | ATH::StreamedResponse
     @skill_repository.find(id)
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La compétence n°#{id} n'a pas été trouvée.")
   end
 
   # Create a skill.
   @[ARTA::Post("/create")]
-  def create(form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(skill_dto)
-
-    last_skill_id = @skill_repository.create(skill_dto)
+  def create(@[TZ::MapFormRequest] dto : App::DTO::SkillDTO) : ATH::StreamedResponse
+    last_skill_id = @skill_repository.create(dto)
 
     save_file!(last_skill_id, "logo", ENTITY_NAME)
 
@@ -45,10 +45,8 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
 
   # Update the skill by its ID.
   @[ARTA::Put("/{id}/update")]
-  def update(id : Int64, form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(skill_dto)
-
-    @skill_repository.update(id, skill_dto)
+  def update(id : Int64, @[TZ::MapFormRequest] dto : App::DTO::SkillDTO) : ATH::StreamedResponse
+    @skill_repository.update(id, dto)
 
     unless @form_data.data["logo"]?
       update_file(id, "logo", ENTITY_NAME)
@@ -59,6 +57,8 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
     )
 
     send_json(200, "La compétence n°#{id} a bien été mise à jour.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La compétence n°#{id} n'a pas été trouvée.")
   end
 
   # Delete the skill by its ID.
@@ -71,16 +71,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
     )
 
     send_json(200, "La compétence n°#{id} a bien été supprimée.")
-  end
-
-  # Store informations into the DTO the skill's processing.
-  private def skill_dto : App::DTO::SkillDTO
-    has_colors = @form_data.data["has_colors"]? == "true"
-
-    App::DTO::SkillDTO.new(
-      name: @form_data.data["name"],
-      description: @form_data.data["description"],
-      has_colors: has_colors
-    )
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La compétence n°#{id} n'a pas été trouvée.")
   end
 end

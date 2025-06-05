@@ -21,30 +21,30 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
 
   # Get the project by its slug.
   @[ARTA::Get("/{slug}")]
-  def show(slug : String) : App::Entities::Project
+  def show(slug : String) : App::Entities::Project | ATH::StreamedResponse
     @project_repository.find(slug)
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "Le projet #{slug} n'a pas été trouvée.")
   end
 
   # Create a project.
   @[ARTA::Post("/create")]
-  def create(form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(project_dto)
-
-    last_project_id = @project_repository.create(project_dto)
+  def create(@[TZ::MapFormRequest] dto : App::DTO::ProjectDTO) : ATH::StreamedResponse
+    last_project_id = @project_repository.create(dto)
 
     save_file!(last_project_id, "thumbnail", ENTITY_NAME)
 
     @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Un nouveau projet a bien été créé.")
+  rescue App::Exceptions::DuplicatedIDException
+    send_json(422, "Vous ne pouvez pas créer un projet qui a le même slug qu'un autre.")
   end
 
   # Update a project by its slug.
   @[ARTA::Put("/{slug}/update")]
-  def update(slug : String, form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(project_dto)
-
-    project_id = @project_repository.update(slug, project_dto)
+  def update(slug : String, @[TZ::MapFormRequest] dto : App::DTO::ProjectDTO) : ATH::StreamedResponse
+    project_id = @project_repository.update(slug, dto)
 
     # Store the thumbnail if it was uploaded by the client.
     unless @form_data.data["thumbnail"]?
@@ -54,6 +54,10 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Le projet #{slug} a bien été mis à jour.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "Le projet #{slug} n'a pas été trouvée.")
+  rescue App::Exceptions::DuplicatedIDException
+    send_json(422, "Vous ne pouvez pas créer un projet qui a le même slug qu'un autre.")
   end
 
   # Delete the project by its slug.
@@ -61,30 +65,10 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
   def delete(slug : String) : ATH::StreamedResponse
     @project_repository.delete(slug)
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Le projet #{slug} a bien été supprimé.")
-  end
-
-  # Store informations into the DTO for the project's processing.
-  private def project_dto : App::DTO::ProjectDTO
-    category_id = @form_data.data["category_id"]
-
-    published_at = if !@form_data.data["published_at"].empty?
-                     Time.parse_local(@form_data.data["published_at"], "%F")
-                   else
-                     nil
-                   end
-
-    App::DTO::ProjectDTO.new(
-      title: @form_data.data["title"],
-      description: @form_data.data["description"],
-      content: @form_data.data["content"],
-      category_id: category_id.empty? ? 0i64 : category_id.to_i64,
-      realized_at: Time.parse_local(@form_data.data["realized_at"], "%F"),
-      published_at: published_at
-    )
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "Le projet #{slug} n'a pas été trouvée.")
   end
 end

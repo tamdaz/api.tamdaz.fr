@@ -13,22 +13,26 @@ class App::Controllers::API::TimelineController < App::Controllers::AbstractCont
 
   # Get the timeline by its ID.
   @[ARTA::Get("/{id}")]
-  def show(id : Int64) : App::Entities::Timeline
+  def show(id : Int64) : App::Entities::Timeline | ATH::StreamedResponse
     @timeline_repository.find(id)
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
   end
 
   # Create a timeline.
   @[ARTA::Post("/create")]
-  def create(@[ATHA::MapRequestBody] timeline_dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
-    @timeline_repository.create(timeline_dto)
+  def create(@[ATHA::MapRequestBody] dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
+    @timeline_repository.create(dto)
     send_json(200, "Le nouveau timeline a bien été créé.")
   end
 
   # Update the timeline by its ID.
   @[ARTA::Put("/{id}/update")]
-  def update(id : Int64, @[ATHA::MapRequestBody] timeline_dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
-    @timeline_repository.update(id, timeline_dto)
+  def update(id : Int64, @[ATHA::MapRequestBody] dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
+    @timeline_repository.update(id, dto)
     send_json(200, "La timeline #{id} a bien été mis à jour.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
   end
 
   # Delete the timeline by its ID.
@@ -36,5 +40,7 @@ class App::Controllers::API::TimelineController < App::Controllers::AbstractCont
   def delete(id : Int64) : ATH::StreamedResponse
     @timeline_repository.delete(id)
     send_json(200, "Le timeline #{id} a bien été supprimé.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
   end
 end

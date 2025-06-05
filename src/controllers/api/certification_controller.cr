@@ -27,23 +27,19 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
 
   # Create a new certification.
   @[ARTA::Post("/create")]
-  def create(form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(certification_dto)
-
-    last_certification_id = @certification_repository.create(certification_dto)
+  def create(@[TZ::MapFormRequest] dto : App::DTO::CertificationDTO) : ATH::StreamedResponse
+    last_certification_id = @certification_repository.create(dto)
     save_file!(last_certification_id, "pdf_file", ENTITY_NAME)
 
     @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
-    send_json(200, "Une nouvelle certification  a bien été créé.")
+    send_json(200, "Une nouvelle certification n°#{last_certification_id} a bien été créé.")
   end
 
   # Update the certification by its ID.
   @[ARTA::Put("/{id}/update")]
-  def update(id : Int64, form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(certification_dto)
-
-    certification_id = @certification_repository.update(id, certification_dto)
+  def update(id : Int64, @[TZ::MapFormRequest] dto : App::DTO::CertificationDTO) : ATH::StreamedResponse
+    certification_id = @certification_repository.update(id, dto)
 
     unless @form_data.data["pdf_file"]?
       update_file(id, "pdf_file", ENTITY_NAME)
@@ -52,6 +48,8 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
     @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "La certification n°#{id} a bien été mise à jour.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La certification n°#{id} n'a pas été trouvée.")
   end
 
   # Delete the certification by its ID.
@@ -62,15 +60,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
     @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "La certification n°#{id} a bien été supprimée.")
-  end
-
-  # Store informations into the DTO for the certification's processing.
-  def certification_dto : App::DTO::CertificationDTO
-    has_certificate = @form_data.data["has_certificate"]? == "true"
-
-    App::DTO::CertificationDTO.new(
-      name: @form_data.data["name"],
-      has_certificate: has_certificate
-    )
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La certification n°#{id} n'a pas été trouvée.")
   end
 end

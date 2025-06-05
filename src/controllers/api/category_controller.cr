@@ -1,9 +1,7 @@
 @[ADI::Register]
 @[ARTA::Route("/categories")]
 class App::Controllers::API::CategoryController < App::Controllers::AbstractController
-  def initialize(
-    @category_repository : App::Repositories::CategoryRepository,
-  ); end
+  def initialize(@category_repository : App::Repositories::CategoryRepository); end
 
   # Get all categories
   @[ARTA::Get("/")]
@@ -25,6 +23,8 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
     @category_repository.create(category_dto)
 
     send_json(200, "Une nouvelle catégorie (#{category_dto.name}) a bien été créé.")
+  rescue App::Exceptions::DuplicatedIDException
+    send_json(422, "Vous ne pouvez pas créer une catégorie qui a le même nom.")
   end
 
   # Update the category by its slug.
@@ -35,6 +35,10 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
     @category_repository.update(slug, category_dto)
 
     send_json(200, "La catégorie #{slug} a bien été mise à jour.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La catégorie #{slug} n'a pas été trouvée.")
+  rescue App::Exceptions::DuplicatedIDException
+    send_json(422, "Vous ne pouvez pas mettre à jour une catégorie qui a le même nom.")
   end
 
   # Delete the category by its slug.
@@ -43,5 +47,7 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
     @category_repository.delete(slug)
 
     send_json(200, "La catégorie #{slug} a bien été supprimée.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La catégorie #{slug} n'a pas été trouvée.")
   end
 end

@@ -23,42 +23,42 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
 
   # Get the report by its ID.
   @[ARTA::Get("/{id}")]
-  def show(id : Int64) : App::Entities::Report
+  def show(id : Int64) : App::Entities::Report | ATH::StreamedResponse
     @report_repository.find(id)
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "Le compte-rendu n°#{id} n'a pas été trouvée.")
   end
 
   # Create a report.
   @[ARTA::Post("/create")]
-  def create(form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(report_dto)
-
-    last_report_id = @report_repository.create(report_dto)
+  def create(@[TZ::MapFormRequest] dto : App::DTO::ReportDTO) : ATH::StreamedResponse
+    last_report_id = @report_repository.create(dto)
 
     save_file!(last_report_id, "pdf_file", ENTITY_NAME)
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Un nouveau compte-rendu a bien été créé.")
+  rescue App::Exceptions::DuplicatedIDException
+    send_json(422, "Vous ne pouvez pas mettre à jour un compte-rendu qui a le même slug qu'un autre.")
   end
 
   # Update the report by its ID.
   @[ARTA::Put("/{id}/update")]
-  def update(id : Int64, form_data : App::Services::FormData) : ATH::StreamedResponse
-    do_validation(report_dto)
-
-    report_id = @report_repository.update(id, report_dto)
+  def update(id : Int64, @[TZ::MapFormRequest] dto : App::DTO::ReportDTO) : ATH::StreamedResponse
+    report_id = @report_repository.update(id, dto)
 
     unless @form_data.data["pdf_file"]?
       update_file(report_id, "pdf_file", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Le compte-rendu n°#{id} a bien été mis à jour.")
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "Le compte-rendu n°#{id} n'a pas été trouvée.")
+  rescue App::Exceptions::DuplicatedIDException
+    send_json(422, "Vous ne pouvez pas mettre à jour un blog qui a le même slug qu'un autre.")
   end
 
   # Delete the report by its ID.
@@ -66,21 +66,10 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
   def delete(id : Int64) : ATH::StreamedResponse
     @report_repository.delete(id)
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
 
     send_json(200, "Le compte-rendu n°#{id} a bien été supprimé.")
-  end
-
-  # Store all informations into the DTO for the report's processing.
-  private def report_dto : App::DTO::ReportDTO
-    category_id = @form_data.data["category_id"]
-
-    App::DTO::ReportDTO.new(
-      title: @form_data.data["title"],
-      category_id: category_id.empty? ? 0i64 : category_id.to_i64,
-      created_at: Time.parse_local(@form_data.data["created_at"], "%F")
-    )
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "Le compte-rendu n°#{id} n'a pas été trouvée.")
   end
 end
