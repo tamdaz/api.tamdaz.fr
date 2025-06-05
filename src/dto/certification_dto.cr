@@ -1,4 +1,4 @@
-struct App::DTO::CertificationDTO
+class App::DTO::CertificationDTO < App::Interfaces::DTOInterface
   include AVD::Validatable
   include JSON::Serializable
 

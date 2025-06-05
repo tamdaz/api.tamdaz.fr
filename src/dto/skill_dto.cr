@@ -1,4 +1,4 @@
-struct App::DTO::SkillDTO
+class App::DTO::SkillDTO < App::Interfaces::DTOInterface
   include AVD::Validatable
   include JSON::Serializable
 

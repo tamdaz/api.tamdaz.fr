@@ -1,4 +1,4 @@
-class App::DTO::ProjectDTO
+class App::DTO::ProjectDTO < App::Interfaces::DTOInterface
   include AVD::Validatable
   include JSON::Serializable
 

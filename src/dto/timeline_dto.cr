@@ -1,4 +1,4 @@
-struct App::DTO::TimelineDTO
+class App::DTO::TimelineDTO < App::Interfaces::DTOInterface
   include AVD::Validatable
   include JSON::Serializable
 

@@ -1,4 +1,4 @@
-struct App::DTO::ReportDTO
+class App::DTO::ReportDTO < App::Interfaces::DTOInterface
   include AVD::Validatable
   include JSON::Serializable
 

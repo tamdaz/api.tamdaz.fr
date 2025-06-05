@@ -1,4 +1,4 @@
-struct App::DTO::BlogDTO
+class App::DTO::BlogDTO < App::Interfaces::DTOInterface
   include AVD::Validatable
   include JSON::Serializable
 
