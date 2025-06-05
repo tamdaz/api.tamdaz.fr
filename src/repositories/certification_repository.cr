@@ -19,6 +19,8 @@ class App::Repositories::CertificationRepository
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Certification)
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(certification_dto : App::DTO::CertificationDTO) : Int64
@@ -27,6 +29,12 @@ class App::Repositories::CertificationRepository
     db = App::Database.db.exec(query, certification_dto.name, certification_dto.has_certificate)
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(id : Int64, certification_dto : App::DTO::CertificationDTO) : Int64
@@ -35,6 +43,8 @@ class App::Repositories::CertificationRepository
     App::Database.db.exec(query, certification_dto.name, certification_dto.has_certificate, id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(id : Int64) : Int64
@@ -55,5 +65,7 @@ class App::Repositories::CertificationRepository
     App::Database.db.exec("DELETE FROM certifications WHERE id = ?;", id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end

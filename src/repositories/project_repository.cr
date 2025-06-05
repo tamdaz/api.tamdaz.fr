@@ -25,6 +25,8 @@ class App::Repositories::ProjectRepository
     SQL
 
     App::Database.db.query_one(query, slug, as: App::Entities::Project)
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(project_dto : App::DTO::ProjectDTO) : Int64
@@ -45,6 +47,12 @@ class App::Repositories::ProjectRepository
     )
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(slug : String, project_dto : App::DTO::ProjectDTO) : Int64
@@ -70,6 +78,8 @@ class App::Repositories::ProjectRepository
     )
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(slug : String) : Int64
@@ -91,5 +101,7 @@ class App::Repositories::ProjectRepository
     App::Database.db.exec("DELETE FROM projects WHERE id = ?", id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end

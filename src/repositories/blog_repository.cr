@@ -6,7 +6,7 @@ class App::Repositories::BlogRepository
     SELECT
       B.id AS `id`, `title`, B.slug AS `slug`, `description`, `content`,
       `is_published`, `published_at`, C.name AS `category`, F.path AS `thumbnail`
-    FROM blogs AS B
+    FROM        blogs     AS B
     INNER JOIN categories AS C ON C.id = B.category_id
     INNER JOIN files      AS F ON F.model_id = B.id
     SQL
@@ -19,13 +19,15 @@ class App::Repositories::BlogRepository
     SELECT
       B.id AS id, title, B.slug AS slug, description, content, is_published,
       published_at, C.name AS category, F.path AS thumbnail
-    FROM blogs AS B
+    FROM       blogs      AS B
     INNER JOIN categories AS C ON C.id = B.category_id
     INNER JOIN files      AS F ON F.model_id = B.id
     WHERE      B.slug = ?
     SQL
 
     App::Database.db.query_one(query, slug, as: App::Entities::Blog)
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(blog_dto : App::DTO::BlogDTO) : Int64
@@ -47,6 +49,12 @@ class App::Repositories::BlogRepository
     )
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(blog_dto : App::DTO::BlogDTO, current_slug : String) : Int64
@@ -73,6 +81,8 @@ class App::Repositories::BlogRepository
     )
 
     blog_id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(slug : String) : Int64
@@ -96,5 +106,7 @@ class App::Repositories::BlogRepository
     end
 
     blog_id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end

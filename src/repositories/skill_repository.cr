@@ -19,6 +19,8 @@ class App::Repositories::SkillRepository
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Skill)
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(skill_dto : App::DTO::SkillDTO) : Int64
@@ -34,6 +36,12 @@ class App::Repositories::SkillRepository
     )
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(id : Int64, skill_dto : App::DTO::SkillDTO) : Int64
@@ -47,6 +55,8 @@ class App::Repositories::SkillRepository
     )
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(id : Int64) : Int64
@@ -66,5 +76,7 @@ class App::Repositories::SkillRepository
     App::Database.db.exec("DELETE FROM skill WHERE id = ?", id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end

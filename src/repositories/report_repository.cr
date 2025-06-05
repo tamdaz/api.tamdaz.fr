@@ -5,7 +5,7 @@ class App::Repositories::ReportRepository
     SELECT
       R.id AS `id`, `title`, F.path AS `path_file`, C.name AS `category`,
       `created_at`
-    FROM reports
+    FROM reports AS R
     INNER JOIN files AS F ON F.model_id = R.id
     INNER JOIN categories AS C ON R.category_id = C.id
     SQL
@@ -18,13 +18,15 @@ class App::Repositories::ReportRepository
     SELECT
       R.id AS `id`, `title`, F.path AS `path_file`, C.name AS `category`,
       `created_at`
-    FROM reports
+    FROM reports AS R
     INNER JOIN files AS F ON F.model_id = R.id
     INNER JOIN categories AS C ON R.category_id = C.id
     WHERE R.id = ?
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Report)
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(report_dto : App::DTO::ReportDTO) : Int64
@@ -40,6 +42,12 @@ class App::Repositories::ReportRepository
     )
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(id : Int64, report_dto : App::DTO::ReportDTO) : Int64
@@ -54,6 +62,8 @@ class App::Repositories::ReportRepository
     )
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(id : Int64) : Int64
@@ -73,5 +83,7 @@ class App::Repositories::ReportRepository
     App::Database.db.exec("DELETE FROM reports WHERE id = ?", id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end

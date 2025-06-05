@@ -10,6 +10,8 @@ class App::Repositories::TWRepository
     App::Database.db.query_one(
       "SELECT * FROM tw WHERE id = ?", id, as: App::Entities::TW
     )
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(tw_dto : App::DTO::TWDTO) : Int64
@@ -27,6 +29,12 @@ class App::Repositories::TWRepository
     )
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(id : Int64, tw_dto : App::DTO::TWDTO) : Int64
@@ -44,11 +52,15 @@ class App::Repositories::TWRepository
     )
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(id : Int64) : Int64
     App::Database.db.exec("DELETE FROM tw WHERE id = ?", id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end

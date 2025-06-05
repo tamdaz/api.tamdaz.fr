@@ -15,6 +15,8 @@ class App::Repositories::TimelineRepository
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Timeline)
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def create(timeline_dto : App::DTO::TimelineDTO) : Int64
@@ -29,6 +31,12 @@ class App::Repositories::TimelineRepository
     )
 
     db.last_insert_id
+  rescue e : Exception
+    if (e.message.as(String).includes?("Duplicate entry"))
+      raise App::Exceptions::DuplicatedIDException.new
+    end
+
+    0i64
   end
 
   def update(id : Int64, timeline_dto : App::DTO::TimelineDTO) : Int64
@@ -44,11 +52,15 @@ class App::Repositories::TimelineRepository
     )
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 
   def delete(id : Int64) : Int64
     App::Database.db.exec("DELETE FROM timelines WHERE `id` = ?", id)
 
     id
+  rescue DB::NoResultsError
+    raise App::Exceptions::DataNotFoundException.new
   end
 end
