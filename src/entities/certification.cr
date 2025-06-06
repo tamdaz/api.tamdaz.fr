@@ -1,5 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(:custom, order: %w(id name has_certificate pdf_file))]
 class App::Entities::Certification
   include DB::Serializable
   include ASR::Serializable

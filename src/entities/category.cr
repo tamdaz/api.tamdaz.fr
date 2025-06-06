@@ -1,5 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(:custom, order: %w(id name slug usage links))]
 class App::Entities::Category
   include DB::Serializable
   include ASR::Serializable

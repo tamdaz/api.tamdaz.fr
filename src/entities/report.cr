@@ -1,5 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(:custom, order: %w(id title pdf_file category created_at))]
 class App::Entities::Report
   include DB::Serializable
   include ASR::Serializable

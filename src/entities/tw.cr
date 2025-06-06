@@ -1,5 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(:custom, order: %w(id title description image_url source_url published_at source))]
 class App::Entities::TW
   include DB::Serializable
   include ASR::Serializable

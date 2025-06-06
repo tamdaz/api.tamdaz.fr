@@ -1,5 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(:custom, order: %w(id name description has_colors logo))]
 class App::Entities::Skill
   include DB::Serializable
   include ASR::Serializable

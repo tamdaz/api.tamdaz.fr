@@ -1,8 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(
-  :custom,
-  order: %w(id title slug description content category thumbnail is_published published_at)
-)]
 class App::Entities::Blog
   include DB::Serializable
   include ASR::Serializable

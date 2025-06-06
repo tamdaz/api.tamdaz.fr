@@ -1,5 +1,4 @@
 @[ASRA::ExclusionPolicy(:all)]
-@[ASRA::AccessorOrder(:custom, order: %w(id date_start date_end description type))]
 class App::Entities::Timeline
   include DB::Serializable
   include ASR::Serializable
