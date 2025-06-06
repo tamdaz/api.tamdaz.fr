@@ -50,7 +50,7 @@ class App::Repositories::BlogRepository
 
     db.last_insert_id
   rescue e : Exception
-    if (e.message.as(String).includes?("Duplicate entry"))
+    if e.message.as(String).includes?("Duplicate entry")
       raise App::Exceptions::DuplicatedIDException.new
     end
 
