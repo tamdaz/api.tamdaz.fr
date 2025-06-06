@@ -1,5 +1,6 @@
 # Listener that consists of deleting files from the tmpfs.
-# Happens when creating, updating or deleting data from the resource controller.
+# This will be trigerred when creating, updating or deleting
+# data from the resource controller.
 @[ADI::Register]
 class App::Listeners::ClearTemporaryFilesListener
   def initialize(@form_data : App::Services::FormData); end

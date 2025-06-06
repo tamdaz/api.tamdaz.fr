@@ -1,5 +1,5 @@
 # Event that consists of deleting temporary files once data is inserted,
-# updated or deleted.
+# Updated or deleted.
 class App::Events::ClearUploadedFiles < AED::Event
   # ...
 end

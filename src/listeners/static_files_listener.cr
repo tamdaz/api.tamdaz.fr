@@ -1,3 +1,4 @@
+# A listener that consists of getting the public resources (`public/` directory).
 @[ADI::Register]
 struct App::Events::StaticFilesListener
   private PUBLIC_DIR = Path.new("public").expand

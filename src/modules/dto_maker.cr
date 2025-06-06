@@ -1,3 +1,4 @@
+# Module that provides all methods to put data on DTOs.
 module App::Modules::DTOMaker
   # Store informations into the DTO for the blog's processing.
   def blog_dto : App::DTO::BlogDTO
