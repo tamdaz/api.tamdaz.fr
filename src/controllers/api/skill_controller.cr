@@ -15,13 +15,13 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
     @skill_repository : App::Repositories::SkillRepository,
   ); end
 
-  # Get all skills.
+  # Retrieves all skills.
   @[ARTA::Get("/")]
   def index : Array(App::Entities::Skill)
     @skill_repository.find_all
   end
 
-  # Get the skill by its ID.
+  # Retrieves the skill by its ID.
   @[ARTA::Get("/{id}")]
   def show(id : Int64) : App::Entities::Skill | ATH::StreamedResponse
     @skill_repository.find(id)
@@ -29,7 +29,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
     send_json(404, "La compétence n°#{id} n'a pas été trouvée.")
   end
 
-  # Create a skill.
+  # Creates a skill.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::SkillDTO) : ATH::StreamedResponse
     last_skill_id = @skill_repository.create(dto)
@@ -41,7 +41,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
     send_json(200, "Une nouvelle compétence a bien été créée.")
   end
 
-  # Update the skill by its ID.
+  # Updates the skill by its ID.
   @[ARTA::Put("/{id}/update")]
   def update(id : Int64, @[TZ::MapFormRequest] dto : App::DTO::SkillDTO) : ATH::StreamedResponse
     @skill_repository.update(id, dto)
@@ -57,7 +57,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
     send_json(404, "La compétence n°#{id} n'a pas été trouvée.")
   end
 
-  # Delete the skill by its ID.
+  # Deletes the skill by its ID.
   @[ARTA::Delete("/{id}/delete")]
   def delete(id : Int64) : ATH::StreamedResponse
     @skill_repository.delete(id)

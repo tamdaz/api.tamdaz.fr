@@ -5,13 +5,13 @@ class App::Controllers::API::TimelineController < App::Controllers::AbstractCont
     @timeline_repository : App::Repositories::TimelineRepository,
   ); end
 
-  # Get all timelines (professional experiences and formations).
+  # Retrieves all timelines (professional experiences and formations).
   @[ARTA::Get("/")]
   def index : Array(App::Entities::Timeline)
     @timeline_repository.find_all
   end
 
-  # Get the timeline by its ID.
+  # Retrieves the timeline by its ID.
   @[ARTA::Get("/{id}")]
   def show(id : Int64) : App::Entities::Timeline | ATH::StreamedResponse
     @timeline_repository.find(id)
@@ -19,14 +19,14 @@ class App::Controllers::API::TimelineController < App::Controllers::AbstractCont
     send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
   end
 
-  # Create a timeline.
+  # Creates a timeline.
   @[ARTA::Post("/create")]
   def create(@[ATHA::MapRequestBody] dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
     @timeline_repository.create(dto)
     send_json(200, "Le nouveau timeline a bien été créé.")
   end
 
-  # Update the timeline by its ID.
+  # Updates the timeline by its ID.
   @[ARTA::Put("/{id}/update")]
   def update(id : Int64, @[ATHA::MapRequestBody] dto : App::DTO::TimelineDTO) : ATH::StreamedResponse
     @timeline_repository.update(id, dto)
@@ -35,7 +35,7 @@ class App::Controllers::API::TimelineController < App::Controllers::AbstractCont
     send_json(404, "La timeline n°#{id} n'a pas été trouvée.")
   end
 
-  # Delete the timeline by its ID.
+  # Deletes the timeline by its ID.
   @[ARTA::Delete("/{id}/delete")]
   def delete(id : Int64) : ATH::StreamedResponse
     @timeline_repository.delete(id)

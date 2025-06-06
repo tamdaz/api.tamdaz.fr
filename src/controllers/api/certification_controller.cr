@@ -13,19 +13,19 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
     @file_repository : App::Repositories::FileRepository,
   ); end
 
-  # Get all certifications.
+  # Retrieves all certifications.
   @[ARTA::Get("/")]
   def index : Array(App::Entities::Certification)
     @certification_repository.find_all
   end
 
-  # Get the certification by its ID.
+  # Retrieves the certification by its ID.
   @[ARTA::Get("/{id}")]
   def show(id : Int64) : App::Entities::Certification
     @certification_repository.find(id)
   end
 
-  # Create a new certification.
+  # Creates a new certification.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::CertificationDTO) : ATH::StreamedResponse
     last_certification_id = @certification_repository.create(dto)
@@ -36,7 +36,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
     send_json(200, "Une nouvelle certification n°#{last_certification_id} a bien été créé.")
   end
 
-  # Update the certification by its ID.
+  # Updates the certification by its ID.
   @[ARTA::Put("/{id}/update")]
   def update(id : Int64, @[TZ::MapFormRequest] dto : App::DTO::CertificationDTO) : ATH::StreamedResponse
     certification_id = @certification_repository.update(id, dto)
@@ -52,7 +52,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
     send_json(404, "La certification n°#{id} n'a pas été trouvée.")
   end
 
-  # Delete the certification by its ID.
+  # Deletes the certification by its ID.
   @[ARTA::Delete("/{id}/delete")]
   def delete(id : Int64) : ATH::StreamedResponse
     @certification_repository.delete(id)

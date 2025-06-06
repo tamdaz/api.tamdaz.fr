@@ -15,13 +15,13 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
     @file_repository : App::Repositories::FileRepository,
   ); end
 
-  # Get all blogs.
+  # Retrieves all blogs.
   @[ARTA::Get("/")]
   def index : Array(App::Entities::Blog)
     @blog_repository.find_all
   end
 
-  # Get the blog by its slug.
+  # Retrieves the blog by its slug.
   @[ARTA::Get("/{slug}")]
   def show(slug : String) : App::Entities::Blog | ATH::StreamedResponse
     @blog_repository.find(slug)
@@ -29,7 +29,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
     send_json(404, "Le blog #{slug} n'a pas été trouvée.")
   end
 
-  # Create a blog.
+  # Createss a blog.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::BlogDTO) : ATH::StreamedResponse
     last_blog_id = @blog_repository.create(dto)
@@ -43,7 +43,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
     send_json(422, "Vous ne pouvez pas créer un blog qui a le même slug qu'un autre.")
   end
 
-  # Update the blog by its slug.
+  # Updatess the blog by its slug.
   @[ARTA::Put("/{slug}/update")]
   def update(slug : String, @[TZ::MapFormRequest] dto : App::DTO::BlogDTO) : ATH::StreamedResponse
     blog_id = @blog_repository.update(dto, slug)
@@ -61,7 +61,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
     send_json(422, "Vous ne pouvez pas mettre à jour un blog qui a le même slug qu'un autre.")
   end
 
-  # Delete the blog by its slug.
+  # Deletess the blog by its slug.
   @[ARTA::Delete("/{slug}/delete")]
   def delete(slug : String) : ATH::StreamedResponse
     @blog_repository.delete(slug)

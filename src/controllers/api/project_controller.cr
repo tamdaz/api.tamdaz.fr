@@ -13,13 +13,13 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     @file_repository : App::Repositories::FileRepository,
   ); end
 
-  # Get all projects.
+  # Retrieves all projects.
   @[ARTA::Get("/")]
   def index : Array(App::Entities::Project)
     @project_repository.find_all
   end
 
-  # Get the project by its slug.
+  # Retrieves the project by its slug.
   @[ARTA::Get("/{slug}")]
   def show(slug : String) : App::Entities::Project | ATH::StreamedResponse
     @project_repository.find(slug)
@@ -27,7 +27,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     send_json(404, "Le projet #{slug} n'a pas été trouvée.")
   end
 
-  # Create a project.
+  # Creates a project.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::ProjectDTO) : ATH::StreamedResponse
     last_project_id = @project_repository.create(dto)
@@ -41,7 +41,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     send_json(422, "Vous ne pouvez pas créer un projet qui a le même slug qu'un autre.")
   end
 
-  # Update a project by its slug.
+  # Updates a project by its slug.
   @[ARTA::Put("/{slug}/update")]
   def update(slug : String, @[TZ::MapFormRequest] dto : App::DTO::ProjectDTO) : ATH::StreamedResponse
     project_id = @project_repository.update(slug, dto)
@@ -60,7 +60,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     send_json(422, "Vous ne pouvez pas créer un projet qui a le même slug qu'un autre.")
   end
 
-  # Delete the project by its slug.
+  # Deletes the project by its slug.
   @[ARTA::Delete("/{slug}/delete")]
   def delete(slug : String) : ATH::StreamedResponse
     @project_repository.delete(slug)
