@@ -15,3 +15,9 @@ tasks:
     cmd: ln -s ./../uploads ./public/uploads
   unlink-uploads:
     cmd: rm ./public/uploads
+  dev:
+    cmd: shards run api
+  build:
+    cmd: shards build api --release --no-debug --progress --stats
+  build-console:
+    cmd: shards build console --release --no-debug --progress --stats
