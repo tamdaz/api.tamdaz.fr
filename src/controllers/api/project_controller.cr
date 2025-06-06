@@ -34,7 +34,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
 
     save_file!(last_project_id, "thumbnail", ENTITY_NAME)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Un nouveau projet a bien été créé.")
   rescue App::Exceptions::DuplicatedIDException
@@ -51,7 +51,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
       update_file(project_id, "thumbnail", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Le projet #{slug} a bien été mis à jour.")
   rescue App::Exceptions::DataNotFoundException
@@ -65,7 +65,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
   def delete(slug : String) : ATH::StreamedResponse
     @project_repository.delete(slug)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Le projet #{slug} a bien été supprimé.")
   rescue App::Exceptions::DataNotFoundException

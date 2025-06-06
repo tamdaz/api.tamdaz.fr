@@ -36,9 +36,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
 
     save_file!(last_skill_id, "logo", ENTITY_NAME)
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Une nouvelle compétence a bien été créée.")
   end
@@ -52,9 +50,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
       update_file(id, "logo", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "La compétence n°#{id} a bien été mise à jour.")
   rescue App::Exceptions::DataNotFoundException
@@ -66,9 +62,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
   def delete(id : Int64) : ATH::StreamedResponse
     @skill_repository.delete(id)
 
-    @event_dispatcher.dispatch(
-      App::Events::ClearTemporaryFilesEvent.new
-    )
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "La compétence n°#{id} a bien été supprimée.")
   rescue App::Exceptions::DataNotFoundException

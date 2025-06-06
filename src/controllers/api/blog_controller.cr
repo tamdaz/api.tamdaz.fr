@@ -36,7 +36,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
 
     save_file!(last_blog_id, "thumbnail", ENTITY_NAME)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Un nouveau blog a bien été créé.")
   rescue App::Exceptions::DuplicatedIDException
@@ -52,7 +52,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
       update_file(blog_id, "thumbnail", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Le blog #{slug} a bien été mis à jour.")
   rescue App::Exceptions::DataNotFoundException
@@ -66,7 +66,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
   def delete(slug : String) : ATH::StreamedResponse
     @blog_repository.delete(slug)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Le blog #{slug} a bien été supprimé.")
   rescue App::Exceptions::DataNotFoundException

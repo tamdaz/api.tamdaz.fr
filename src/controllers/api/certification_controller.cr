@@ -31,7 +31,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
     last_certification_id = @certification_repository.create(dto)
     save_file!(last_certification_id, "pdf_file", ENTITY_NAME)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Une nouvelle certification n°#{last_certification_id} a bien été créé.")
   end
@@ -45,7 +45,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
       update_file(id, "pdf_file", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "La certification n°#{id} a bien été mise à jour.")
   rescue App::Exceptions::DataNotFoundException
@@ -57,7 +57,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
   def delete(id : Int64) : ATH::StreamedResponse
     @certification_repository.delete(id)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "La certification n°#{id} a bien été supprimée.")
   rescue App::Exceptions::DataNotFoundException

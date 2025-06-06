@@ -36,7 +36,7 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
 
     save_file!(last_report_id, "pdf_file", ENTITY_NAME)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Un nouveau compte-rendu a bien été créé.")
   rescue App::Exceptions::DuplicatedIDException
@@ -52,7 +52,7 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
       update_file(report_id, "pdf_file", ENTITY_NAME)
     end
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Le compte-rendu n°#{id} a bien été mis à jour.")
   rescue App::Exceptions::DataNotFoundException
@@ -66,7 +66,7 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
   def delete(id : Int64) : ATH::StreamedResponse
     @report_repository.delete(id)
 
-    @event_dispatcher.dispatch(App::Events::ClearTemporaryFilesEvent.new)
+    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
 
     send_json(200, "Le compte-rendu n°#{id} a bien été supprimé.")
   rescue App::Exceptions::DataNotFoundException
