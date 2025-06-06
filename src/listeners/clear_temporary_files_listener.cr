@@ -5,7 +5,7 @@ class App::Listeners::ClearTemporaryFilesListener
   def initialize(@form_data : App::Services::FormData); end
 
   @[AEDA::AsEventListener]
-  def on_delete_tmp_files(event : App::Events::ClearTemporaryFilesEvent) : Nil
+  def on_delete_tmp_files(event : App::Events::ClearUploadedFiles) : Nil
     @form_data.files.each do |file|
       File.delete?(file[:path])
     end
