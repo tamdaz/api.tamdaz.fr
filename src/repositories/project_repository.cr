@@ -21,7 +21,7 @@ class App::Repositories::ProjectRepository
     FROM projects AS P
     INNER JOIN categories AS C ON C.id = P.category_id
     INNER JOIN files      AS F ON F.model_id = P.id
-    WHERE slug = ?
+    WHERE P.slug = ?
     SQL
 
     App::Database.db.query_one(query, slug, as: App::Entities::Project)

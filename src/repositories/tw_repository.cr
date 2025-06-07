@@ -7,9 +7,7 @@ class App::Repositories::TWRepository
   end
 
   def find(id : Int64) : App::Entities::TW
-    App::Database.db.query_one(
-      "SELECT * FROM tw WHERE id = ?", id, as: App::Entities::TW
-    )
+    App::Database.db.query_one("SELECT * FROM tw WHERE id = ?", id, as: App::Entities::TW)
   rescue DB::NoResultsError
     raise App::Exceptions::DataNotFoundException.new
   end

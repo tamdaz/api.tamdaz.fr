@@ -2,7 +2,7 @@
 class App::Repositories::CertificationRepository
   def find_all : Array(App::Entities::Certification)
     query = <<-SQL
-    SELECT C.id AS `id`, `name`, `has_certificate`
+    SELECT C.id AS `id`, `name`, `has_certificate`, F.path AS `pdf_file`
     FROM certifications AS C
     INNER JOIN files as F ON C.id = F.model_id
     SQL
@@ -12,7 +12,7 @@ class App::Repositories::CertificationRepository
 
   def find(id : Int64) : App::Entities::Certification
     query = <<-SQL
-    SELECT C.id AS `id`, `name`, `has_certificate`
+    SELECT C.id AS `id`, `name`, `has_certificate`, F.path AS `pdf_file`
     FROM certifications AS C
     INNER JOIN files as F ON C.id = F.model_id
     WHERE C.id = ?
