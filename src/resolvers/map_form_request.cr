@@ -10,9 +10,9 @@ struct App::Resolvers::MapFormRequest
   def initialize(@form_data : App::Services::FormData); end
 
   def resolve(request : ATH::Request, parameter : ATH::Controller::ParameterMetadata) : App::Interfaces::DTOInterface?
-    @form_data.start_parse(request)
-
     return unless parameter.annotation_configurations.has? ::TZ::MapFormRequest
+
+    @form_data.start_parse(request)
 
     return blog_dto if parameter.type == App::DTO::BlogDTO
     return certification_dto if parameter.type == App::DTO::CertificationDTO

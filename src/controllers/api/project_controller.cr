@@ -10,6 +10,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     @form_data : App::Services::FormData,
     @event_dispatcher : AED::EventDispatcherInterface,
     @project_repository : App::Repositories::ProjectRepository,
+    @category_repository : App::Repositories::CategoryRepository,
     @file_repository : App::Repositories::FileRepository,
   ); end
 
@@ -30,13 +31,14 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
   # Creates a project.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::ProjectDTO) : ATH::StreamedResponse
-    last_project_id = @project_repository.create(dto)
-
-    save_file!(last_project_id, "thumbnail", ENTITY_NAME)
-
-    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
-    send_json(200, "Un nouveau projet a bien été créé.")
+    if @category_repository.find_all.size != 0
+      last_project_id = @project_repository.create(dto)
+      save_file!(last_project_id, "thumbnail", ENTITY_NAME)
+      @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
+      send_json(200, "Un nouveau projet a bien été créé.")
+    else
+      send_json(422, "Pour créer un projet, il faut créer une catégorie.")
+    end
   rescue App::Exceptions::DuplicatedIDException
     send_json(422, "Vous ne pouvez pas créer un projet qui a le même slug qu'un autre.")
   end

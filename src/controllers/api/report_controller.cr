@@ -12,6 +12,7 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
     @form_data : App::Services::FormData,
     @event_dispatcher : AED::EventDispatcherInterface,
     @file_repository : App::Repositories::FileRepository,
+    @category_repository : App::Repositories::CategoryRepository,
     @report_repository : App::Repositories::ReportRepository,
   ); end
 
@@ -32,13 +33,14 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
   # Creates a report.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::ReportDTO) : ATH::StreamedResponse
-    last_report_id = @report_repository.create(dto)
-
-    save_file!(last_report_id, "pdf_file", ENTITY_NAME)
-
-    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
-    send_json(200, "Un nouveau compte-rendu a bien été créé.")
+    if @category_repository.find_all.size != 0
+      last_report_id = @report_repository.create(dto)
+      save_file!(last_report_id, "pdf_file", ENTITY_NAME)
+      @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
+      send_json(200, "Un nouveau compte-rendu a bien été créé.")
+    else
+      send_json(422, "Pour créer un compte-rendu, il faut créer une catégorie.")
+    end
   rescue App::Exceptions::DuplicatedIDException
     send_json(422, "Vous ne pouvez pas mettre à jour un compte-rendu qui a le même slug qu'un autre.")
   end

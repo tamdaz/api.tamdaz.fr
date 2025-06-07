@@ -12,6 +12,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
     @form_data : App::Services::FormData,
     @event_dispatcher : AED::EventDispatcherInterface,
     @blog_repository : App::Repositories::BlogRepository,
+    @category_repository : App::Repositories::CategoryRepository,
     @file_repository : App::Repositories::FileRepository,
   ); end
 
@@ -32,15 +33,16 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
   # Createss a blog.
   @[ARTA::Post("/create")]
   def create(@[TZ::MapFormRequest] dto : App::DTO::BlogDTO) : ATH::StreamedResponse
-    last_blog_id = @blog_repository.create(dto)
-
-    save_file!(last_blog_id, "thumbnail", ENTITY_NAME)
-
-    @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
-    send_json(200, "Un nouveau blog a bien été créé.")
+    if @category_repository.find_all.size != 0
+      last_blog_id = @blog_repository.create(dto)
+      save_file!(last_blog_id, "thumbnail", ENTITY_NAME)
+      @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
+      send_json(200, "Un nouveau blog a bien été créé.")
+    else
+      send_json(422, "Pour créer un blog, il faut créer une catégorie.")
+    end
   rescue App::Exceptions::DuplicatedIDException
-    send_json(422, "Vous ne pouvez pas créer un blog qui a le même slug qu'un autre.")
+    send_json(422, "Impossible de créer un blog qui a le même slug qu'un autre.")
   end
 
   # Updatess the blog by its slug.
@@ -58,7 +60,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "Le blog #{slug} n'a pas été trouvée.")
   rescue App::Exceptions::DuplicatedIDException
-    send_json(422, "Vous ne pouvez pas mettre à jour un blog qui a le même slug qu'un autre.")
+    send_json(422, "Impossible de modifier un blog qui a le même slug qu'un autre.")
   end
 
   # Deletess the blog by its slug.
