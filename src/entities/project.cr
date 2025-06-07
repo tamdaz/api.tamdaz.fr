@@ -22,6 +22,9 @@ class App::Entities::Project
   property category : String
 
   @[ASRA::Expose]
+  property thumbnail : String
+
+  @[ASRA::Expose]
   property realized_at : Time
 
   @[ASRA::Expose]

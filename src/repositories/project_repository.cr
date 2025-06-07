@@ -3,9 +3,9 @@ class App::Repositories::ProjectRepository
   def find_all : Array(App::Entities::Project)
     query = <<-SQL
     SELECT
-      P.id AS `id`, `title`, P.slug AS `slug`, `description`, `content`, C.name AS `category`,
-      `realized_at`, `published_at`, F.path AS `thumbnail`
-    FROM projects AS P
+      P.id AS `id`, `title`, P.slug AS `slug`, `description`, `content`,
+      `realized_at`, `published_at`, C.name AS `category`, F.path AS `thumbnail`
+    FROM       projects   AS P
     INNER JOIN categories AS C ON C.id = P.category_id
     INNER JOIN files      AS F ON F.model_id = P.id
     SQL
@@ -16,9 +16,9 @@ class App::Repositories::ProjectRepository
   def find(slug : String) : App::Entities::Project
     query = <<-SQL
     SELECT
-      P.id AS `id`, `title`, P.slug AS `slug`, `description`, `content`, C.name AS `category`,
-      `realized_at`, `published_at`, F.path AS `thumbnail`
-    FROM projects AS P
+      P.id AS `id`, `title`, P.slug AS `slug`, `description`, `content`,
+      `realized_at`, `published_at`, C.name AS `category`, F.path AS `thumbnail`
+    FROM       projects   AS P
     INNER JOIN categories AS C ON C.id = P.category_id
     INNER JOIN files      AS F ON F.model_id = P.id
     WHERE P.slug = ?
