@@ -13,5 +13,5 @@ class App::Controllers::API::MonitorController < App::Controllers::AbstractContr
   end
 
   # TODO: For later, it's interesting to send informations about backups;
-  # where the program sends the %FS used, %FS remaining and all backups.
+  # where the program sends the %FS used, %FS remaining and all directories (YYYYDDMMHHMMSS).
 end
