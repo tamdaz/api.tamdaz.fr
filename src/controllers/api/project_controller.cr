@@ -15,7 +15,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
   ); end
 
   # Retrieves all projects.
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Project)
     @project_repository.find_all
   end

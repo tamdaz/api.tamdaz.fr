@@ -14,7 +14,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
   ); end
 
   # Retrieves all certifications.
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Certification)
     @certification_repository.find_all
   end

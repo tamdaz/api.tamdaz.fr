@@ -6,7 +6,7 @@ class App::Controllers::API::TWController < App::Controllers::AbstractController
   def initialize(@tw_repository : App::Repositories::TWRepository); end
 
   # Retrieves all articles of the technology watch.
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::TW)
     @tw_repository.find_all
   end

@@ -16,7 +16,7 @@ class App::Controllers::API::SkillController < App::Controllers::AbstractControl
   ); end
 
   # Retrieves all skills.
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Skill)
     @skill_repository.find_all
   end

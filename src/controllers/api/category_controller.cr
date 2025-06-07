@@ -4,7 +4,7 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
   def initialize(@category_repository : App::Repositories::CategoryRepository); end
 
   # Retrieves all categories
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Category)
     @category_repository.find_all
   end

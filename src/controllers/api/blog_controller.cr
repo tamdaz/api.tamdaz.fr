@@ -17,7 +17,7 @@ class App::Controllers::API::BlogController < App::Controllers::AbstractControll
   ); end
 
   # Retrieves all blogs.
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Blog)
     @blog_repository.find_all
   end

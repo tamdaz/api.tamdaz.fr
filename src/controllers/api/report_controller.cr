@@ -17,7 +17,7 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
   ); end
 
   # Retrieves all reports.
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Report)
     @report_repository.find_all
   end

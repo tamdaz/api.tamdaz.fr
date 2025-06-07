@@ -6,7 +6,7 @@ class App::Controllers::API::TimelineController < App::Controllers::AbstractCont
   ); end
 
   # Retrieves all timelines (professional experiences and formations).
-  @[ARTA::Get("/")]
+  @[ARTA::Get("")]
   def index : Array(App::Entities::Timeline)
     @timeline_repository.find_all
   end
