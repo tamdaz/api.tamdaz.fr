@@ -10,9 +10,5 @@ class App::DTO::ReportDTO < App::Interfaces::DTOInterface
 
   getter created_at : Time
 
-  def initialize(
-    @title : String,
-    @category_id : Int64,
-    @created_at : Time,
-  ); end
+  def initialize(@title : String, @category_id : Int64, @created_at : Time); end
 end
