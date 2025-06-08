@@ -7,7 +7,7 @@ class App::DTO::CategoryDTO < App::Interfaces::DTOInterface
 
   @[Assert::Choice(
     ["Blogs", "Reports", "Projects"],
-    message: "Veuillez choisir l'une des 3 usages : 'Blogs', 'Categories' et 'Reports'."
+    message: "Veuillez choisir l'une des 3 usages : 'Blogs', 'Projects' et 'Reports'."
   )]
   getter usage : String
 end
