@@ -11,8 +11,10 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
 
   # Retrieves the category by its slug.
   @[ARTA::Get("/{slug}")]
-  def show(slug : String) : App::Entities::Category
+  def show(slug : String) : App::Entities::Category | ATH::StreamedResponse
     @category_repository.find(slug)
+  rescue App::Exceptions::DataNotFoundException
+    send_json(404, "La catégorie #{slug} n'a pas été trouvée.")
   end
 
   # Creates a new category.
