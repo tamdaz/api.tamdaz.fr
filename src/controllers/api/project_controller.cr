@@ -54,7 +54,6 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
     end
 
     @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
     send_json(200, "Le projet #{slug} a bien été mis à jour.")
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "Le projet #{slug} n'a pas été trouvée.")
@@ -66,9 +65,7 @@ class App::Controllers::API::ProjectController < App::Controllers::AbstractContr
   @[ARTA::Delete("/{slug}/delete")]
   def delete(slug : String) : ATH::StreamedResponse
     @project_repository.delete(slug)
-
     @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
     send_json(200, "Le projet #{slug} a bien été supprimé.")
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "Le projet #{slug} n'a pas été trouvée.")

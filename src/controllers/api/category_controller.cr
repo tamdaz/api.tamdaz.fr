@@ -23,7 +23,6 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
     @[ATHA::MapRequestBody] category_dto : App::DTO::CategoryDTO,
   ) : ATH::StreamedResponse
     @category_repository.create(category_dto)
-
     send_json(200, "Une nouvelle catégorie (#{category_dto.name}) a bien été créé.")
   rescue App::Exceptions::DuplicatedIDException
     send_json(422, "Vous ne pouvez pas créer une catégorie qui a le même nom.")
@@ -31,11 +30,8 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
 
   # Updates the category by its slug.
   @[ARTA::Put("/{slug}/update")]
-  def update(
-    slug : String, @[ATHA::MapRequestBody] category_dto : App::DTO::CategoryDTO,
-  ) : ATH::StreamedResponse
+  def update(slug : String, @[ATHA::MapRequestBody] category_dto : App::DTO::CategoryDTO) : ATH::StreamedResponse
     @category_repository.update(slug, category_dto)
-
     send_json(200, "La catégorie #{slug} a bien été mise à jour.")
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "La catégorie #{slug} n'a pas été trouvée.")
@@ -47,7 +43,6 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
   @[ARTA::Delete("/{slug}/delete")]
   def delete(slug : String) : ATH::StreamedResponse
     @category_repository.delete(slug)
-
     send_json(200, "La catégorie #{slug} a bien été supprimée.")
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "La catégorie #{slug} n'a pas été trouvée.")

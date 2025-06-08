@@ -55,7 +55,6 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
     end
 
     @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
     send_json(200, "Le compte-rendu n°#{id} a bien été mis à jour.")
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "Le compte-rendu n°#{id} n'a pas été trouvée.")
@@ -67,9 +66,7 @@ class App::Controllers::API::ReportController < App::Controllers::AbstractContro
   @[ARTA::Delete("/{id}/delete")]
   def delete(id : Int64) : ATH::StreamedResponse
     @report_repository.delete(id)
-
     @event_dispatcher.dispatch(App::Events::ClearUploadedFiles.new)
-
     send_json(200, "Le compte-rendu n°#{id} a bien été supprimé.")
   rescue App::Exceptions::DataNotFoundException
     send_json(404, "Le compte-rendu n°#{id} n'a pas été trouvée.")
