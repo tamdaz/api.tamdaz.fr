@@ -52,7 +52,7 @@ class App::Commands::ManageIPAdmin < ACON::Command
 
     style.success("L'addresse IP #{ip} est ajoutée dans la liste.")
   rescue App::Exceptions::DuplicatedIDException
-    style.error("Il est impossible d'ajouter une IP identique.")
+    style.error("Impossible d'ajouter une adresse IP identique.")
 
     Status::FAILURE
   end
@@ -62,9 +62,9 @@ class App::Commands::ManageIPAdmin < ACON::Command
     proc = ->(entity : App::Entities::AdminIP) { [entity.ip] }
     ips = @admin_ip_repository.find_all
 
-    style.note("Il y a #{ips.size} adresses IP qui sont dans la liste.")
+    style.note("Il y a #{ips.size} adresses IP dans la liste.")
 
-    style.table(["IPv4 addresses"], ips.map(&proc))
+    style.table(["Adresses IPv4"], ips.map(&proc))
   end
 
   # Removes an IPv4 address into the database.
