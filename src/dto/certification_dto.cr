@@ -8,8 +8,5 @@ class App::DTO::CertificationDTO < App::Interfaces::DTOInterface
   @[Assert::NotNil(message: "Veuillez spécifier si la certification est fournie ou non.")]
   getter has_certificate : Bool?
 
-  def initialize(
-    @name : String,
-    @has_certificate : Bool?,
-  ); end
+  def initialize(@name : String, @has_certificate : Bool?); end
 end

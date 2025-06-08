@@ -16,10 +16,7 @@ class App::DTO::BlogDTO < App::Interfaces::DTOInterface
   getter category_id : Int64
 
   def initialize(
-    @title : String,
-    @description : String?,
-    @content : String?,
-    @is_published : Bool?,
-    @category_id : Int64,
+    @title : String, @description : String?, @content : String?,
+    @is_published : Bool?, @category_id : Int64,
   ); end
 end

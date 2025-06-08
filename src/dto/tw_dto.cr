@@ -22,11 +22,8 @@ class App::DTO::TWDTO < App::Interfaces::DTOInterface
   getter source : String
 
   def initialize(
-    @title : String,
-    @description : String,
-    @image_url : String,
-    @source_url : String,
-    @source : String,
-    @published_at : Time? = nil,
+    @title : String, @description : String,
+    @image_url : String, @source_url : String,
+    @source : String, @published_at : Time? = nil,
   ); end
 end

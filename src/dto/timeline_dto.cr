@@ -19,9 +19,6 @@ class App::DTO::TimelineDTO < App::Interfaces::DTOInterface
   getter type : String
 
   def initialize(
-    @date_start : Time,
-    @date_end : Time,
-    @description : String,
-    @type : String,
+    @date_start : Time, @date_end : Time, @description : String, @type : String,
   ); end
 end
