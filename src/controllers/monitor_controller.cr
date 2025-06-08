@@ -1,7 +1,7 @@
 @[ADI::Register]
 class App::Controllers::API::MonitorController < App::Controllers::AbstractController
-  # Sends informations about the server's resources (CPU count, %CPU, memory usage
-  # and the Crystal's version).
+  # Sends informations about the server's resources
+  # (CPU count, %CPU, memory usage and the Crystal's version).
   @[ARTA::Get("/monitor")]
   def show_monitor : Hash(String, String | Int64)
     {
