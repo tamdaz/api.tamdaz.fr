@@ -27,16 +27,12 @@ class App::Commands::ManageIPAdmin < ACON::Command
     end
 
     helper = self.helper ACON::Helper::Question
-
     question = ACON::Question(String).new("Veuillez entrer l'adresse IP : ", "")
     ip_address = helper.ask input, output, question
-
-    Status::INVALID if ip_address.empty?
 
     case action
     when "create" then add_ip_address(ip_address.as(String), style)
     when "remove" then remove_ip_address(ip_address.as(String), style)
-    else               return Status::INVALID
     end
 
     Status::SUCCESS
