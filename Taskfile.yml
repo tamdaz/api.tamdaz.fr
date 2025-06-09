@@ -17,6 +17,14 @@ tasks:
     cmd: rm ./public/uploads
   dev:
     cmd: shards run api
+  test:
+    dotenv: ['.env.test']
+    cmds:
+      - if [ "$(ls -1 uploads | wc -l)" -gt 0 ]; then rm uploads/*; fi
+      - micrate drop
+      - micrate create
+      - micrate up
+      - crystal spec
   build:
     cmd: shards build api --release --no-debug --progress --stats
   build-console:

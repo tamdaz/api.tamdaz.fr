@@ -2,25 +2,22 @@ require "spec"
 require "athena"
 require "athena-dotenv"
 require "athena/spec"
-require "granite/adapter/mysql"
 
+require "./../src/modules/**"
+require "./../src/resolvers/**"
+require "./../src/database"
 require "./../src/interfaces/**"
-require "./../src/enums/**"
-require "./../src/controllers/**"
-require "./../src/services/**"
 require "./../src/dto/**"
-require "./../src/models/**"
+require "./../src/entities/**"
+require "./../src/events/**"
+require "./../src/helpers/**"
+require "./../src/listeners/**"
+require "./../src/repositories/**"
+require "./../src/exceptions/**"
+require "./../src/services/**"
+require "./../src/commands/**"
+require "./../src/controllers/**"
 
 Athena::Dotenv.new.overload ".env.test"
 
-begin
-  Granite::Connections << Granite::Adapter::Mysql.new(
-    name: ENV["DATABASE_CONNECTION"],
-    url: ENV["DATABASE_URL"]
-  )
-
-  ASPEC.run_all
-rescue e : KeyError
-  puts e.message
-  exit 1
-end
+ASPEC.run_all
