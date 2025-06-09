@@ -16,7 +16,7 @@ class App::Repositories::AdminIPRepository
     raise App::Exceptions::DataNotFoundException.new
   end
 
-  def create(dto : App::DTO::AdminIPDTO) : Void
+  def create(dto : App::Entities::AdminIP) : Void
     query = <<-SQL
     INSERT INTO admin_ips (`ip`) VALUES (?);
     SQL

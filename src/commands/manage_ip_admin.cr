@@ -40,7 +40,7 @@ class App::Commands::ManageIPAdmin < ACON::Command
 
   # Adds an IPv4 address into the database.
   private def add_ip_address(ip : String, style : ACON::Style::Athena) : Void
-    dto = App::DTO::AdminIPDTO.new(ip)
+    dto = App::Entities::AdminIP.new(ip)
 
     if AVD.validator.validate(dto).empty?
       @admin_ip_repository.create(dto)
