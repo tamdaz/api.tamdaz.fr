@@ -10,4 +10,6 @@ class App::DTO::CategoryDTO < App::Interfaces::DTOInterface
     message: "Veuillez choisir l'une des 3 usages : 'Blogs', 'Projects' et 'Reports'."
   )]
   getter usage : String
+
+  def initialize(@name : String, @usage : String); end
 end
