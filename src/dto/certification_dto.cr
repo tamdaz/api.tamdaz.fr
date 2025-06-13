@@ -9,4 +9,17 @@ class App::DTO::CertificationDTO < App::Interfaces::DTOInterface
   getter has_certificate : Bool?
 
   def initialize(@name : String, @has_certificate : Bool?); end
+
+  def initialize(form_data : App::Services::FormData)
+    has_keys = %w(name has_certificate).all? do |key|
+      form_data.data.has_key?(key)
+    end
+
+    if has_keys
+      @name = form_data.data["name"]
+      @has_certificate = form_data.data["has_certificate"]? == "true"
+    else
+      raise ATH::Exception::BadRequest.new "Some keys are missing in the request"
+    end
+  end
 end

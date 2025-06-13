@@ -11,4 +11,20 @@ class App::DTO::ReportDTO < App::Interfaces::DTOInterface
   getter created_at : Time
 
   def initialize(@title : String, @category_id : Int64, @created_at : Time); end
+
+  def initialize(form_data : App::Services::FormData)
+    has_keys = %w(title category_id created_at).all? do |key|
+      form_data.data.has_key?(key)
+    end
+
+    if has_keys
+      category_id = form_data.data["category_id"]
+
+      @title = form_data.data["title"]
+      @category_id = category_id.empty? ? 0i64 : category_id.to_i64
+      @created_at = Time.parse_local(form_data.data["created_at"], "%F")
+    else
+      raise ATH::Exception::BadRequest.new "Some keys are missing in the request"
+    end
+  end
 end

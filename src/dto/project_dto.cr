@@ -22,4 +22,29 @@ class App::DTO::ProjectDTO < App::Interfaces::DTOInterface
     @title : String, @description : String?, @content : String?,
     @category_id : Int64?, @realized_at : Time?, @published_at : Time?,
   ); end
+
+  def initialize(form_data : App::Services::FormData)
+    has_keys = %w(title description content category_id realized_at published_at).all? do |key|
+      form_data.data.has_key?(key)
+    end
+
+    if has_keys
+      category_id = form_data.data["category_id"]
+
+      published_at = if !form_data.data["published_at"].empty?
+                       Time.parse_local(form_data.data["published_at"], "%F")
+                     else
+                       nil
+                     end
+
+      @title = form_data.data["title"]
+      @description = form_data.data["description"]
+      @content = form_data.data["content"]
+      @category_id = category_id.empty? ? 0i64 : category_id.to_i64
+      @realized_at = Time.parse_local(form_data.data["realized_at"], "%F")
+      @published_at = published_at
+    else
+      raise ATH::Exception::BadRequest.new "Some keys are missing in the request"
+    end
+  end
 end
