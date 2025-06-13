@@ -18,5 +18,6 @@ struct App::Resolvers::MapFormRequest
     return certification_dto if parameter.type == App::DTO::CertificationDTO
     return project_dto if parameter.type == App::DTO::ProjectDTO
     return report_dto if parameter.type == App::DTO::ReportDTO
+    return skill_dto if parameter.type == App::DTO::SkillDTO
   end
 end
