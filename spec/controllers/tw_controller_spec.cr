@@ -21,6 +21,7 @@ struct TWControllerTest < ATH::Spec::APITestCase
       ),
     ]
 
+    # ameba:disable Naming/BlockParameterName
     tws.each do |tw|
       App::Repositories::TWRepository.new.create(tw)
     end
