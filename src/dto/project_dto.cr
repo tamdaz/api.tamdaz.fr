@@ -24,11 +24,7 @@ class App::DTO::ProjectDTO < App::Interfaces::DTOInterface
   ); end
 
   def initialize(form_data : App::Services::FormData)
-    has_keys = %w(title description content category_id realized_at published_at).all? do |key|
-      form_data.data.has_key?(key)
-    end
-
-    if has_keys
+    if has_keys?(form_data)
       category_id = form_data.data["category_id"]
 
       published_at = if !form_data.data["published_at"].empty?

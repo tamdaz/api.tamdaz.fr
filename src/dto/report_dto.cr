@@ -13,11 +13,7 @@ class App::DTO::ReportDTO < App::Interfaces::DTOInterface
   def initialize(@title : String, @category_id : Int64, @created_at : Time); end
 
   def initialize(form_data : App::Services::FormData)
-    has_keys = %w(title category_id created_at).all? do |key|
-      form_data.data.has_key?(key)
-    end
-
-    if has_keys
+    if has_keys?(form_data)
       category_id = form_data.data["category_id"]
 
       @title = form_data.data["title"]

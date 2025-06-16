@@ -21,11 +21,7 @@ class App::DTO::BlogDTO < App::Interfaces::DTOInterface
   ); end
 
   def initialize(form_data : App::Services::FormData)
-    has_keys = %w(title description content is_published category_id thumbnail).all? do |key|
-      form_data.data.has_key?(key)
-    end
-
-    if has_keys
+    if has_keys?(form_data)
       category_id = form_data.data["category_id"]
       is_published = form_data.data["is_published"]? == "true"
 

@@ -11,11 +11,7 @@ class App::DTO::CertificationDTO < App::Interfaces::DTOInterface
   def initialize(@name : String, @has_certificate : Bool?); end
 
   def initialize(form_data : App::Services::FormData)
-    has_keys = %w(name has_certificate).all? do |key|
-      form_data.data.has_key?(key)
-    end
-
-    if has_keys
+    if has_keys?(form_data)
       @name = form_data.data["name"]
       @has_certificate = form_data.data["has_certificate"]? == "true"
     else

@@ -14,11 +14,7 @@ class App::DTO::SkillDTO < App::Interfaces::DTOInterface
   def initialize(@name : String, @description : String, @has_colors : Bool?); end
 
   def initialize(form_data : App::Services::FormData)
-    has_keys = %w(name description has_colors).all? do |key|
-      form_data.data.has_key?(key)
-    end
-
-    if has_keys
+    if has_keys?(form_data)
       @name = form_data.data["name"]
       @description = form_data.data["description"]
       @has_colors = form_data.data["has_colors"]? == "true"
