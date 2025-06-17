@@ -22,11 +22,15 @@ class App::Entities::Project
   property category : String
 
   @[ASRA::Expose]
-  property thumbnail : String
-
-  @[ASRA::Expose]
   property realized_at : Time
 
   @[ASRA::Expose]
   property published_at : Time?
+
+  @[ASRA::VirtualProperty]
+  def thumbnail : String
+    App::Helpers::URLGenerator.generate(@thumbnail)
+  end
+
+  setter thumbnail : String
 end

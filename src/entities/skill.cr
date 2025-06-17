@@ -15,6 +15,10 @@ class App::Entities::Skill
   @[ASRA::Expose]
   property? has_colors : Bool
 
-  @[ASRA::Expose]
-  property logo : String
+  @[ASRA::VirtualProperty]
+  def logo : String
+    App::Helpers::URLGenerator.generate(@logo)
+  end
+
+  setter logo : String
 end

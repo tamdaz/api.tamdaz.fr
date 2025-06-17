@@ -10,11 +10,15 @@ class App::Entities::Report
   property title : String
 
   @[ASRA::Expose]
-  property pdf_file : String
-
-  @[ASRA::Expose]
   property category : String
 
   @[ASRA::Expose]
   property created_at : Time
+
+  @[ASRA::VirtualProperty]
+  def pdf_file : String
+    App::Helpers::URLGenerator.generate(@pdf_file)
+  end
+
+  setter pdf_file : String
 end

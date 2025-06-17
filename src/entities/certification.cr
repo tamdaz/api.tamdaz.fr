@@ -12,6 +12,10 @@ class App::Entities::Certification
   @[ASRA::Expose]
   property? has_certificate : Bool
 
-  @[ASRA::Expose]
-  property pdf_file : String
+  @[ASRA::VirtualProperty]
+  def pdf_file : String
+    App::Helpers::URLGenerator.generate(@pdf_file)
+  end
+
+  setter pdf_file : String
 end
