@@ -6,7 +6,7 @@ class App::Repositories::FileRepository
     WHERE model_id = ? AND model_type = ?
     SQL
 
-    App::Entities::File.from_rs(App::Database.db.query(query, id, type))[0]
+    App::Database.db.query_one(query, id, type, as: App::Entities::File)
   end
 
   def create(id : Int64, type : String, path : String) : Int64

@@ -3,7 +3,13 @@ class App::Repositories::CategoryRepository
   def find_all : Array(App::Entities::Category)
     query = <<-SQL
     SELECT
-      C.id AS `id`, `name`, C.slug AS `slug`, `usage`, COUNT(C.id) AS links
+      C.id AS `id`, `name`, C.slug AS `slug`, `usage`,
+      CASE
+        WHEN C.usage = 'blogs' THEN COUNT(B.id)
+        WHEN C.usage = 'reports' THEN COUNT(R.id)
+        WHEN C.usage = 'projects' THEN COUNT(P.id)
+        ELSE 0
+      END AS links
     FROM      categories AS C
     LEFT JOIN blogs      AS B ON C.id = B.category_id
     LEFT JOIN reports    AS R ON C.id = R.category_id
@@ -14,10 +20,37 @@ class App::Repositories::CategoryRepository
     App::Entities::Category.from_rs(App::Database.db.query(query))
   end
 
+  def group_by_usages : Hash(String, Int64)
+    query = <<-SQL
+    SELECT C.usage, COUNT(C.id) AS number_of_categories
+    FROM      categories AS C
+    LEFT JOIN blogs      AS B ON C.id = B.category_id
+    LEFT JOIN reports    AS R ON C.id = R.category_id
+    LEFT JOIN projects   AS P ON C.id = P.category_id
+    GROUP BY C.usage;
+    SQL
+
+    output = {} of String => Int64
+
+    usages = App::Database.db.query_all(query, as: {String, Int64})
+
+    usages.each do |usage|
+      output[usage[0].downcase] = usage[1]
+    end
+
+    output
+  end
+
   def find(slug : String) : App::Entities::Category
     query = <<-SQL
     SELECT
-      C.id AS `id`, `name`, C.slug AS `slug`, `usage`, COUNT(C.id) AS links
+      C.id AS `id`, `name`, C.slug AS `slug`, `usage`,
+      CASE
+        WHEN C.usage = 'blogs' THEN COUNT(B.id)
+        WHEN C.usage = 'reports' THEN COUNT(R.id)
+        WHEN C.usage = 'projects' THEN COUNT(P.id)
+        ELSE 0
+      END AS links
     FROM      categories AS C
     LEFT JOIN blogs      AS B ON C.id = B.category_id
     LEFT JOIN reports    AS R ON C.id = R.category_id

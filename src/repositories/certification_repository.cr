@@ -5,6 +5,7 @@ class App::Repositories::CertificationRepository
     SELECT C.id AS `id`, `name`, `has_certificate`, F.path AS `pdf_file`
     FROM certifications AS C
     INNER JOIN files as F ON C.id = F.model_id
+    WHERE F.model_type = "App::Entities::Certification";
     SQL
 
     App::Entities::Certification.from_rs(App::Database.db.query(query))
@@ -15,7 +16,7 @@ class App::Repositories::CertificationRepository
     SELECT C.id AS `id`, `name`, `has_certificate`, F.path AS `pdf_file`
     FROM certifications AS C
     INNER JOIN files as F ON C.id = F.model_id
-    WHERE C.id = ?
+    WHERE C.id = ? AND F.model_type = "App::Entities::Certification";
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Certification)

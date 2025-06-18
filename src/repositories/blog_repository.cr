@@ -3,12 +3,12 @@
 class App::Repositories::BlogRepository
   def find_all : Array(App::Entities::Blog)
     query = <<-SQL
-    SELECT
-      B.id AS `id`, `title`, B.slug AS `slug`, `description`, `content`,
+    SELECT B.id AS `id`, `title`, B.slug AS `slug`, `description`, `content`,
       `is_published`, `published_at`, C.name AS `category`, F.path AS `thumbnail`
     FROM        blogs     AS B
     INNER JOIN categories AS C ON C.id = B.category_id
     INNER JOIN files      AS F ON F.model_id = B.id
+    WHERE F.model_type = "App::Entities::Blog";
     SQL
 
     App::Entities::Blog.from_rs(App::Database.db.query(query))
@@ -22,7 +22,7 @@ class App::Repositories::BlogRepository
     FROM       blogs      AS B
     INNER JOIN categories AS C ON C.id = B.category_id
     INNER JOIN files      AS F ON F.model_id = B.id
-    WHERE      B.slug = ?
+    WHERE      F.model_type = "App::Entities::Blog" AND B.slug = ?;
     SQL
 
     App::Database.db.query_one(query, slug, as: App::Entities::Blog)

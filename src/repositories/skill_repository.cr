@@ -2,9 +2,10 @@
 class App::Repositories::SkillRepository
   def find_all : Array(App::Entities::Skill)
     query = <<-SQL
-    SELECT S.id AS `id`, `name`, `description`, `has_colors`
+    SELECT S.id AS `id`, `name`, `description`, `has_colors`, F.path AS `logo`
     FROM skills AS S
     INNER JOIN files AS F ON F.model_id = S.id
+    WHERE F.model_type = "App::Entities::Skill";
     SQL
 
     App::Entities::Skill.from_rs(App::Database.db.query(query))
@@ -12,10 +13,10 @@ class App::Repositories::SkillRepository
 
   def find(id : Int64) : App::Entities::Skill
     query = <<-SQL
-    SELECT S.id AS `id`, `name`, `description`, `has_colors`
+    SELECT S.id AS `id`, `name`, `description`, `has_colors`, F.path AS `logo`
     FROM skills AS S
     INNER JOIN files AS F ON F.model_id = S.id
-    WHERE S.id = ?
+    WHERE S.id = ? AND F.model_type = "App::Entities::Skill";
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Skill)

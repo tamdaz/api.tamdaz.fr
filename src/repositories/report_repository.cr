@@ -3,11 +3,12 @@ class App::Repositories::ReportRepository
   def find_all : Array(App::Entities::Report)
     query = <<-SQL
     SELECT
-      R.id AS `id`, `title`, F.path AS `path_file`, C.name AS `category`,
+      R.id AS `id`, `title`, F.path AS `pdf_file`, C.name AS `category`,
       `created_at`
     FROM reports AS R
     INNER JOIN files AS F ON F.model_id = R.id
     INNER JOIN categories AS C ON R.category_id = C.id
+    WHERE F.model_type = "App::Entities::Report";
     SQL
 
     App::Entities::Report.from_rs(App::Database.db.query(query))
@@ -16,12 +17,12 @@ class App::Repositories::ReportRepository
   def find(id : Int64) : App::Entities::Report
     query = <<-SQL
     SELECT
-      R.id AS `id`, `title`, F.path AS `path_file`, C.name AS `category`,
+      R.id AS `id`, `title`, F.path AS `pdf_file`, C.name AS `category`,
       `created_at`
     FROM reports AS R
     INNER JOIN files AS F ON F.model_id = R.id
     INNER JOIN categories AS C ON R.category_id = C.id
-    WHERE R.id = ?
+    WHERE R.id = ? AND F.model_type = "App::Entities::Report";
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Report)

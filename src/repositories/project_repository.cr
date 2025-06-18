@@ -8,6 +8,7 @@ class App::Repositories::ProjectRepository
     FROM       projects   AS P
     INNER JOIN categories AS C ON C.id = P.category_id
     INNER JOIN files      AS F ON F.model_id = P.id
+    WHERE F.model_type = "App::Entities::Project";
     SQL
 
     App::Entities::Project.from_rs(App::Database.db.query(query))
@@ -21,7 +22,7 @@ class App::Repositories::ProjectRepository
     FROM       projects   AS P
     INNER JOIN categories AS C ON C.id = P.category_id
     INNER JOIN files      AS F ON F.model_id = P.id
-    WHERE P.slug = ?
+    WHERE F.model_type = "App::Entities::Project" AND P.slug = ?
     SQL
 
     App::Database.db.query_one(query, slug, as: App::Entities::Project)
@@ -86,7 +87,8 @@ class App::Repositories::ProjectRepository
     id = self.find(slug).id
 
     file_path = App::Database.db.query_one(
-      "SELECT path FROM files WHERE model_id = ?", id, &.read(String)
+      "SELECT path FROM files WHERE model_type = 'App::Entities::Project' AND model_id = ?",
+      id, &.read(String)
     )
 
     if File.exists?("./uploads/#{file_path}")
@@ -94,8 +96,8 @@ class App::Repositories::ProjectRepository
     end
 
     App::Database.db.exec(
-      "DELETE FROM files WHERE model_id = ? AND model_type = ?",
-      id, App::Entities::Project.name
+      "DELETE FROM files WHERE model_type = 'App::Entities::Project' AND model_id = ?",
+      id
     )
 
     App::Database.db.exec("DELETE FROM projects WHERE id = ?", id)
