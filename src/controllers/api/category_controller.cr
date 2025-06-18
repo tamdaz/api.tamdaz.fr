@@ -9,6 +9,11 @@ class App::Controllers::API::CategoryController < App::Controllers::AbstractCont
     @category_repository.find_all
   end
 
+  @[ARTA::Get("/count_links")]
+  def count_links : ATH::StreamedResponse
+    send_json { |io| io << @category_repository.group_by_usages.to_json }
+  end
+
   # Retrieves the category by its slug.
   @[ARTA::Get("/{slug}")]
   def show(slug : String) : App::Entities::Category | ATH::StreamedResponse
