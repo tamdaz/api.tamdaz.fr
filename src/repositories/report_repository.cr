@@ -69,7 +69,7 @@ class App::Repositories::ReportRepository
 
   def delete(id : Int64) : Int64
     file_path = App::Database.db.query_one(
-      "SELECT path FROM files WHERE model_id = ?", id, &.read(String)
+      "SELECT path FROM files WHERE model_type = 'App::Entities::Report' AND model_id = ?", id, &.read(String)
     )
 
     if File.exists?("./uploads/#{file_path}")
@@ -77,8 +77,8 @@ class App::Repositories::ReportRepository
     end
 
     App::Database.db.exec(
-      "DELETE FROM files WHERE model_id = ? AND model_type = ?",
-      id, App::Entities::Report.name
+      "DELETE FROM files WHERE model_type = 'App::Entities::Report' AND model_id = ?",
+      id
     )
 
     App::Database.db.exec("DELETE FROM reports WHERE id = ?", id)

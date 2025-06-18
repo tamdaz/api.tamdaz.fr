@@ -50,8 +50,8 @@ class App::Repositories::CertificationRepository
 
   def delete(id : Int64) : Int64
     file_path = App::Database.db.query_one(
-      "SELECT path FROM files WHERE model_id = ? AND model_type = ?;",
-      id, App::Entities::Certification.name, &.read(String)
+      "SELECT path FROM files WHERE model_type = 'App::Entities::Certification' AND model_id = ?;",
+      id, &.read(String)
     )
 
     if File.exists?("./uploads/#{file_path}")
@@ -59,8 +59,8 @@ class App::Repositories::CertificationRepository
     end
 
     App::Database.db.exec(
-      "DELETE FROM files WHERE model_id = ? AND model_type = ?",
-      id, App::Entities::Certification.name
+      "DELETE FROM files WHERE model_type = 'App::Entities::Certification' AND model_id = ?",
+      id
     )
 
     App::Database.db.exec("DELETE FROM certifications WHERE id = ?;", id)

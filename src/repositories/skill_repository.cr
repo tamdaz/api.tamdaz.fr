@@ -62,7 +62,7 @@ class App::Repositories::SkillRepository
 
   def delete(id : Int64) : Int64
     file_path = App::Database.db.query_one(
-      "SELECT path FROM files WHERE model_id = ?", id, &.read(String)
+      "SELECT path FROM files WHERE model_type = 'App::Entities::Skill' AND model_id = ?", id, &.read(String)
     )
 
     if File.exists?("./uploads/#{file_path}")
@@ -70,11 +70,11 @@ class App::Repositories::SkillRepository
     end
 
     App::Database.db.exec(
-      "DELETE FROM files WHERE model_id = ? AND model_type = ?",
+      "DELETE FROM files WHERE model_type = 'App::Entities::Skill' AND model_id = ?",
       id, App::Entities::Skill.name
     )
 
-    App::Database.db.exec("DELETE FROM skill WHERE id = ?", id)
+    App::Database.db.exec("DELETE FROM skills WHERE id = ?", id)
 
     id
   rescue DB::NoResultsError
