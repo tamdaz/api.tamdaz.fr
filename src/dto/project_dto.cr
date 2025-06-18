@@ -28,7 +28,7 @@ class App::DTO::ProjectDTO < App::Interfaces::DTOInterface
       category_id = form_data.data["category_id"]
 
       published_at = if !form_data.data["published_at"].empty?
-                       Time.parse_local(form_data.data["published_at"], "%F")
+                       Time.parse_utc(form_data.data["published_at"], "%F")
                      else
                        nil
                      end
@@ -37,7 +37,7 @@ class App::DTO::ProjectDTO < App::Interfaces::DTOInterface
       @description = form_data.data["description"]
       @content = form_data.data["content"]
       @category_id = category_id.empty? ? 0i64 : category_id.to_i64
-      @realized_at = Time.parse_local(form_data.data["realized_at"], "%F")
+      @realized_at = Time.parse_utc(form_data.data["realized_at"], "%F")
       @published_at = published_at
     else
       raise ATH::Exception::BadRequest.new "Some keys are missing in the request"

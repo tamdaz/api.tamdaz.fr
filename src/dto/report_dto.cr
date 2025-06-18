@@ -18,7 +18,7 @@ class App::DTO::ReportDTO < App::Interfaces::DTOInterface
 
       @title = form_data.data["title"]
       @category_id = category_id.empty? ? 0i64 : category_id.to_i64
-      @created_at = Time.parse_local(form_data.data["created_at"], "%F")
+      @created_at = Time.parse_utc(form_data.data["created_at"], "%F")
     else
       raise ATH::Exception::BadRequest.new "Some keys are missing in the request"
     end
