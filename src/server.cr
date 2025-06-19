@@ -1,6 +1,5 @@
 require "mysql"
 require "athena"
-require "file_utils"
 require "athena-dotenv"
 require "./app"
 
@@ -24,5 +23,3 @@ ATH.configure({
 Dir.mkdir_p("/tmp/athena")
 
 ATH.run(host: ENV["APP_HOST"].to_s, port: ENV["APP_PORT"].to_i)
-
-FileUtils.rm_r("/tmp/athena")
