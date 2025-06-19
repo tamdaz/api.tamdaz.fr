@@ -91,13 +91,13 @@ class App::Repositories::BlogRepository
     )
 
     file_path = App::Database.db.query_one?(
-      "SELECT path FROM files WHERE F.model_type = 'App::Entities::Blog' AND model_id = ?", blog_id, &.read(String)
+      "SELECT path FROM files WHERE model_type = 'App::Entities::Blog' AND model_id = ?", blog_id, &.read(String)
     )
 
     App::Database.db.exec("DELETE FROM blogs WHERE slug = ?", slug)
 
     App::Database.db.exec(
-      "DELETE FROM files WHERE F.model_type = 'App::Entities::Blog' AND model_id = ?",
+      "DELETE FROM files WHERE model_type = 'App::Entities::Blog' AND model_id = ?",
       blog_id
     )
 
