@@ -6,7 +6,7 @@ class App::Helpers::URLGenerator
     String.build do |io|
       io << (ENV["APP_ENABLE_HTTPS"] == true ? "https" : "http") << "://"
       io << ENV["APP_HOST"] << ':' << (ENV["APP_PORT"] if ENV["APP_PORT"])
-      io << "/uploads/"
+      io << '/' << ENV["STORAGE_DIR"]
       io << path
     end
   end
