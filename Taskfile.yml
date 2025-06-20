@@ -24,7 +24,7 @@ tasks:
       - micrate drop
       - micrate create
       - micrate up
-      - crystal spec --verbose --progress --stats
+      - crystal spec --progress --stats
   build:
     cmd: shards build api --release --no-debug --progress --stats
   build-console:
