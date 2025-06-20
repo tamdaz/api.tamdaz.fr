@@ -53,9 +53,7 @@ class App::Repositories::ReportRepository
 
   def update(id : Int64, report_dto : App::DTO::ReportDTO) : Int64
     query = <<-SQL
-    UPDATE reports
-    SET title = ?, category_id = ?, created_at = ?
-    WHERE id = ?
+    UPDATE reports SET title = ?, category_id = ?, created_at = ? WHERE id = ?
     SQL
 
     App::Database.db.exec(

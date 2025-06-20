@@ -26,10 +26,7 @@ class App::Repositories::SkillRepository
 
   def create(skill_dto : App::DTO::SkillDTO) : Int64
     query = <<-SQL
-    INSERT INTO
-      skills (`name`, `description`, `has_colors`)
-    VALUES
-      (?, ?, ?)
+    INSERT INTO skills (`name`, `description`, `has_colors`) VALUES (?, ?, ?)
     SQL
 
     db = App::Database.db.exec(
@@ -47,8 +44,7 @@ class App::Repositories::SkillRepository
 
   def update(id : Int64, skill_dto : App::DTO::SkillDTO) : Int64
     query = <<-SQL
-    UPDATE skills SET `name` = ?, `description` = ?, `has_colors` = ?
-    WHERE id = ?
+    UPDATE skills SET `name` = ?, `description` = ?, `has_colors` = ? WHERE id = ?
     SQL
 
     App::Database.db.exec(

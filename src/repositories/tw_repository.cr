@@ -1,9 +1,7 @@
 @[ADI::Register]
 class App::Repositories::TWRepository
   def find_all : Array(App::Entities::TW)
-    App::Entities::TW.from_rs(
-      App::Database.db.query("SELECT * FROM tw")
-    )
+    App::Entities::TW.from_rs(App::Database.db.query("SELECT * FROM tw"))
   end
 
   def find(id : Int64) : App::Entities::TW

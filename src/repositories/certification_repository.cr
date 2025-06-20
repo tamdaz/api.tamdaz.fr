@@ -25,7 +25,9 @@ class App::Repositories::CertificationRepository
   end
 
   def create(certification_dto : App::DTO::CertificationDTO) : Int64
-    query = "INSERT INTO certifications (`name`, `has_certificate`) VALUES (?, ?);"
+    query = <<-SQL
+    INSERT INTO certifications (`name`, `has_certificate`) VALUES (?, ?);*
+    SQL
 
     db = App::Database.db.exec(query, certification_dto.name, certification_dto.has_certificate)
 
@@ -39,7 +41,9 @@ class App::Repositories::CertificationRepository
   end
 
   def update(id : Int64, certification_dto : App::DTO::CertificationDTO) : Int64
-    query = "UPDATE certifications SET `name` = ?, `has_certificate` = ? WHERE id = ?;"
+    query = <<-SQL
+    UPDATE certifications SET `name` = ?, `has_certificate` = ? WHERE id = ?;
+    SQL
 
     App::Database.db.exec(query, certification_dto.name, certification_dto.has_certificate, id)
 

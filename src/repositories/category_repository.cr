@@ -5,8 +5,8 @@ class App::Repositories::CategoryRepository
     SELECT
       C.id AS `id`, `name`, C.slug AS `slug`, `usage`,
       CASE
-        WHEN C.usage = 'blogs' THEN COUNT(B.id)
-        WHEN C.usage = 'reports' THEN COUNT(R.id)
+        WHEN C.usage = 'blogs'    THEN COUNT(B.id)
+        WHEN C.usage = 'reports'  THEN COUNT(R.id)
         WHEN C.usage = 'projects' THEN COUNT(P.id)
         ELSE 0
       END AS links
@@ -34,8 +34,8 @@ class App::Repositories::CategoryRepository
 
     usages = App::Database.db.query_all(query, as: {String, Int64})
 
-    usages.each do |usage|
-      output[usage[0].downcase] = usage[1]
+    usages.each do |usage, count|
+      output[usage] = count
     end
 
     output
@@ -46,8 +46,8 @@ class App::Repositories::CategoryRepository
     SELECT
       C.id AS `id`, `name`, C.slug AS `slug`, `usage`,
       CASE
-        WHEN C.usage = 'blogs' THEN COUNT(B.id)
-        WHEN C.usage = 'reports' THEN COUNT(R.id)
+        WHEN C.usage = 'blogs'    THEN COUNT(B.id)
+        WHEN C.usage = 'reports'  THEN COUNT(R.id)
         WHEN C.usage = 'projects' THEN COUNT(P.id)
         ELSE 0
       END AS links

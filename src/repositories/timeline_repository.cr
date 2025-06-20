@@ -10,9 +10,7 @@ class App::Repositories::TimelineRepository
 
   def find(id : Int64) : App::Entities::Timeline
     query = <<-SQL
-    SELECT
-      `id`, `date_start`, `date_end`, `description`, `type`
-    FROM timelines WHERE `id` = ?
+    SELECT `id`, `date_start`, `date_end`, `description`, `type` FROM timelines WHERE `id` = ?
     SQL
 
     App::Database.db.query_one(query, id, as: App::Entities::Timeline)
@@ -22,8 +20,7 @@ class App::Repositories::TimelineRepository
 
   def create(timeline_dto : App::DTO::TimelineDTO) : Int64
     query = <<-SQL
-    INSERT INTO timelines (`date_start`, `date_end`, `description`, `type`)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO timelines (`date_start`, `date_end`, `description`, `type`) VALUES (?, ?, ?, ?)
     SQL
 
     db = App::Database.db.exec(
