@@ -26,7 +26,7 @@ class App::Repositories::CertificationRepository
 
   def create(certification_dto : App::DTO::CertificationDTO) : Int64
     query = <<-SQL
-    INSERT INTO certifications (`name`, `has_certificate`) VALUES (?, ?);*
+    INSERT INTO certifications (`name`, `has_certificate`) VALUES (?, ?);
     SQL
 
     db = App::Database.db.exec(query, certification_dto.name, certification_dto.has_certificate)
