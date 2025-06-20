@@ -2,7 +2,7 @@ require "./../spec_helper"
 
 struct SkillControllerTest < ATH::Spec::APITestCase
   def test_create_skill : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 
   def test_get_skills : Nil
@@ -12,10 +12,10 @@ struct SkillControllerTest < ATH::Spec::APITestCase
   end
 
   def test_update_skill : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 
   def test_delete_skill : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 end

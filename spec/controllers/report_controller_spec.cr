@@ -2,7 +2,7 @@ require "./../spec_helper"
 
 struct ReportControllerTest < ATH::Spec::APITestCase
   def test_create_report : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 
   def test_get_reports : Nil
@@ -12,10 +12,10 @@ struct ReportControllerTest < ATH::Spec::APITestCase
   end
 
   def test_update_report : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 
   def test_delete_report : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 end

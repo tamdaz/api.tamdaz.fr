@@ -2,7 +2,7 @@ require "./../spec_helper"
 
 struct CertificationControllerTest < ATH::Spec::APITestCase
   def test_create_certification : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 
   def test_get_certifications : Nil
@@ -12,10 +12,10 @@ struct CertificationControllerTest < ATH::Spec::APITestCase
   end
 
   def test_update_certification : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 
   def test_delete_certification : Nil
-    # TODO: Complete this method.
+    pending!("Cannot send a form data for the moment.")
   end
 end
