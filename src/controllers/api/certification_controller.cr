@@ -24,7 +24,7 @@ class App::Controllers::API::CertificationController < App::Controllers::Abstrac
   def show(id : Int64) : App::Entities::Certification | ATH::StreamedResponse
     @certification_repository.find(id)
   rescue App::Exceptions::DataNotFoundException
-    send_json(404, "La catégorie #{id} n'a pas été trouvée.")
+    send_json(404, "La certification #{id} n'a pas été trouvée.")
   end
 
   # Creates a new certification.
