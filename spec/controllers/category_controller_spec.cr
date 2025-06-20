@@ -22,11 +22,14 @@ struct CategoryControllerTest < ATH::Spec::APITestCase
   def test_create_category : Nil
     header = HTTP::Headers{"Content-Type" => "application/json"}
     body = {:name => "My category", :usage => "Blogs"}.to_json
-    self.post("/categories/create", body, header).status.should eq(HTTP::Status::OK)
+
+    self.post("/categories/create", body, header)
+    self.assert_response_is_successful
   end
 
   def test_get_categories : Nil
     self.get("/categories").body.should_not eq("[]")
+    self.assert_response_is_successful
 
     # >>> blogs
     self.get("/categories/operating-system").status.should eq(HTTP::Status::OK)
@@ -45,10 +48,12 @@ struct CategoryControllerTest < ATH::Spec::APITestCase
   def test_update_category : Nil
     header = HTTP::Headers{"Content-Type" => "application/json"}
     body = {:name => "My super category", :usage => "Reports"}.to_json
-    self.put("/categories/my-category/update", body, header).status.should eq(HTTP::Status::OK)
+    self.put("/categories/my-category/update", body, header)
+    self.assert_response_is_successful
   end
 
   def test_delete_category : Nil
-    self.delete("/categories/my-super-category/delete").status.should eq(HTTP::Status::OK)
+    self.delete("/categories/my-super-category/delete")
+    self.assert_response_is_successful
   end
 end
