@@ -18,11 +18,6 @@ class App::DTO::ProjectDTO < App::Interfaces::DTOInterface
 
   getter published_at : Time?
 
-  def initialize(
-    @title : String, @description : String?, @content : String?,
-    @category_id : Int64?, @realized_at : Time?, @published_at : Time?,
-  ); end
-
   def initialize(form_data : App::Services::FormData)
     if has_keys?(form_data)
       category_id = form_data.data["category_id"]

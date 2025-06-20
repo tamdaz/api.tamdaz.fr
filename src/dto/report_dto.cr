@@ -10,8 +10,6 @@ class App::DTO::ReportDTO < App::Interfaces::DTOInterface
 
   getter created_at : Time
 
-  def initialize(@title : String, @category_id : Int64, @created_at : Time); end
-
   def initialize(form_data : App::Services::FormData)
     if has_keys?(form_data)
       category_id = form_data.data["category_id"]

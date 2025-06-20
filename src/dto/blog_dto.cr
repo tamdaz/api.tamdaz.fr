@@ -15,11 +15,6 @@ class App::DTO::BlogDTO < App::Interfaces::DTOInterface
   @[Assert::NotEqualTo(0, message: "Veuillez spécifier la catégorie.")]
   getter category_id : Int64
 
-  def initialize(
-    @title : String, @description : String?, @content : String?,
-    @is_published : Bool?, @category_id : Int64,
-  ); end
-
   def initialize(form_data : App::Services::FormData)
     if has_keys?(form_data)
       category_id = form_data.data["category_id"]

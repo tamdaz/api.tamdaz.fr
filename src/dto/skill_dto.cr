@@ -11,8 +11,6 @@ class App::DTO::SkillDTO < App::Interfaces::DTOInterface
   @[Assert::NotNil(message: "Veuillez spécifier si le logo a des couleurs ou non.")]
   getter has_colors : Bool?
 
-  def initialize(@name : String, @description : String, @has_colors : Bool?); end
-
   def initialize(form_data : App::Services::FormData)
     if has_keys?(form_data)
       @name = form_data.data["name"]
