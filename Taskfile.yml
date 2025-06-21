@@ -8,15 +8,19 @@ tasks:
       - micrate drop
       - micrate create
       - micrate up
+
   test:
     cmds:
       - crystal spec
+
   link-uploads:
     cmd: ln -s ./../uploads ./public/uploads
+
   unlink-uploads:
     cmd: rm ./public/uploads
   dev:
     cmd: shards run api
+
   test:
     dotenv: ['.env.test']
     cmds:
@@ -25,6 +29,7 @@ tasks:
       - micrate create
       - micrate up
       - crystal spec --progress --stats
+
   build:
     cmd: shards build api --release --no-debug --progress --stats
   build-console:
