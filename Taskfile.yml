@@ -31,6 +31,17 @@ tasks:
       - crystal spec --progress --stats
 
   build:
-    cmd: shards build api --release --no-debug --progress --stats
+    cmd: shards build api --release --no-debug --progress --stats --static
+
+  deploy:
+    dotenv: ['.env']
+    cmds:
+      - docker build -t crystal-builder .
+      - docker run --rm -v "$PWD/bin:/app/bin" crystal-builder
+      - task: unlink-uploads
+      - sshpass -p "$DEPLOY_PASSWORD" scp -r ./{bin,db,public,Taskfile.yml} $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_DESTINATION
+      - rm -f bin/api
+      - task: link-uploads
+
   build-console:
-    cmd: shards build console --release --no-debug --progress --stats
+    cmd: shards build console --release --no-debug --progress --stats --static
