@@ -42,9 +42,13 @@ class App::Commands::ManageIPAdmin < ACON::Command
   private def add_ip_address(ip : String, style : ACON::Style::Athena) : Void
     dto = App::Entities::AdminIP.new(ip)
 
-    if AVD.validator.validate(dto).empty?
-      @admin_ip_repository.create(dto)
+    unless AVD.validator.validate(dto).empty?
+      style.error("L'adresse IP que vous avez saisi n'est pas valide.")
+
+      return Status::INVALID
     end
+
+    @admin_ip_repository.create(dto)
 
     style.success("L'addresse IP #{ip} est ajoutée dans la liste.")
   rescue App::Exceptions::DuplicatedIDException
